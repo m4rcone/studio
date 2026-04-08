@@ -50,10 +50,10 @@ export async function getDeploymentStatus(
 }
 
 /**
- * Append the Vercel automation bypass query parameter to a URL.
- * This allows browser clients (links, iframes) to access protected preview deployments.
+ * Returns the clean Vercel URL with the bypass query param appended — only used
+ * server-side to produce redirect targets. Never embed this in client HTML directly.
  */
-function withBypass(url: string): string {
+export function buildBypassUrl(url: string): string {
   const env = getEnv();
   if (!env.VERCEL_AUTOMATION_BYPASS_SECRET) return url;
   const separator = url.includes("?") ? "&" : "?";
