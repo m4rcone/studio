@@ -10,11 +10,13 @@ interface DeploymentStatus {
 /**
  * Get the current deployment status for a branch.
  * Tries GitHub Deployments API first, falls back to pinging the estimated URL.
+ * All URLs returned to the client include the Vercel bypass query param when configured.
  */
 export async function getDeploymentStatus(
   branch: string,
 ): Promise<DeploymentStatus> {
   const estimatedUrl = buildEstimatedUrl(branch);
+  const estimatedUrlForClient = withBypass(estimatedUrl);
 
   try {
     const deployment = await github.getLatestDeployment(branch);
@@ -24,12 +26,12 @@ export async function getDeploymentStatus(
         if (status.state === "success") {
           return {
             status: "ready",
-            url: status.url || estimatedUrl,
-            estimatedUrl,
+            url: withBypass(status.url || estimatedUrl),
+            estimatedUrl: estimatedUrlForClient,
           };
         }
         if (status.state === "failure" || status.state === "error") {
-          return { status: "error", url: null, estimatedUrl };
+          return { status: "error", url: null, estimatedUrl: estimatedUrlForClient };
         }
         // Not confirmed yet — fall through to URL ping as secondary check
       }
@@ -38,13 +40,24 @@ export async function getDeploymentStatus(
     // GitHub API unavailable — fall through to URL ping
   }
 
-  // Fallback: ping the estimated URL directly
+  // Fallback: ping the estimated URL directly (using header bypass, not query param)
   const isLive = await pingUrl(estimatedUrl);
   if (isLive) {
-    return { status: "ready", url: estimatedUrl, estimatedUrl };
+    return { status: "ready", url: estimatedUrlForClient, estimatedUrl: estimatedUrlForClient };
   }
 
-  return { status: "building", url: null, estimatedUrl };
+  return { status: "building", url: null, estimatedUrl: estimatedUrlForClient };
+}
+
+/**
+ * Append the Vercel automation bypass query parameter to a URL.
+ * This allows browser clients (links, iframes) to access protected preview deployments.
+ */
+function withBypass(url: string): string {
+  const env = getEnv();
+  if (!env.VERCEL_AUTOMATION_BYPASS_SECRET) return url;
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}x-vercel-protection-bypass=${env.VERCEL_AUTOMATION_BYPASS_SECRET}`;
 }
 
 /**
