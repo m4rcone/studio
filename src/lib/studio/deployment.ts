@@ -61,7 +61,7 @@ export async function getDeploymentStatus(
  * Append the Vercel automation bypass query parameter to a URL.
  * This allows browser clients (links, iframes) to access protected preview deployments.
  */
-export function withBypass(url: string): string {
+function withBypass(url: string): string {
   const env = getEnv();
   if (!env.VERCEL_AUTOMATION_BYPASS_SECRET) return url;
   try {

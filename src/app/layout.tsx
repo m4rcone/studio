@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Serif_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { getSiteConfig } from "@/lib/content";
+import { VercelBypassCleanup } from "@/components/VercelBypassCleanup";
 
 const dmSerifDisplay = DM_Serif_Display({
   subsets: ["latin"],
@@ -41,6 +42,7 @@ export default function RootLayout({
       className={`${dmSerifDisplay.variable} ${inter.variable}`}
     >
       <body className="bg-background text-foreground min-h-screen antialiased">
+        <VercelBypassCleanup />
         {children}
       </body>
     </html>
