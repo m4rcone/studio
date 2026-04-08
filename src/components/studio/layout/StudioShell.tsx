@@ -187,6 +187,7 @@ export function StudioShell() {
             error={error}
             sessionId={session?.id ?? null}
             onSend={sendMessage}
+            onProposalApplied={session?.id ? () => refreshSession(session.id!) : undefined}
           />
         </div>
 

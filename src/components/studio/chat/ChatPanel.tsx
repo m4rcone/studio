@@ -10,6 +10,7 @@ interface ChatPanelProps {
   error: string | null;
   sessionId: string | null;
   onSend: (message: string) => void;
+  onProposalApplied?: () => void;
 }
 
 export function ChatPanel({
@@ -18,6 +19,7 @@ export function ChatPanel({
   error,
   sessionId,
   onSend,
+  onProposalApplied,
 }: ChatPanelProps) {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -25,6 +27,7 @@ export function ChatPanel({
         messages={messages}
         isStreaming={isStreaming}
         sessionId={sessionId}
+        onProposalApplied={onProposalApplied}
       />
       {error && (
         <div className="border-t border-(--st-border) px-4 py-2">

@@ -10,12 +10,14 @@ interface MessageListProps {
   messages: UIChatMessage[];
   isStreaming: boolean;
   sessionId: string | null;
+  onProposalApplied?: () => void;
 }
 
 export function MessageList({
   messages,
   isStreaming,
   sessionId,
+  onProposalApplied,
 }: MessageListProps) {
   const { ref, handleScroll } = useAutoScroll<HTMLDivElement>([
     messages,
@@ -49,7 +51,7 @@ export function MessageList({
         </div>
       )}
       {messages.map((msg) => (
-        <ChatMessage key={msg.id} message={msg} sessionId={sessionId} />
+        <ChatMessage key={msg.id} message={msg} sessionId={sessionId} onProposalApplied={onProposalApplied} />
       ))}
       {isStreaming && <StreamingIndicator />}
     </div>
