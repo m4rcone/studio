@@ -45,8 +45,9 @@ export const STUDIO_STRINGS = {
     unavailable: "Preview will be available after the first change.",
     iframeFailed: "Could not load the preview. Try opening it in a new tab.",
     openNewTab: "Open in new tab",
-    estimatedWarning:
-      "Estimated URL \u2014 the deployment may still be in progress",
+    estimatedWarning: "Deployment in progress\u2026",
+    checking: "Checking\u2026",
+    checkNow: "Check now",
     showPreview: "Show preview",
     hidePreview: "Hide preview",
     loading: "Loading\u2026",

@@ -49,12 +49,14 @@ export async function getDeploymentStatus(
 
 /**
  * Ping a URL to check if it responds successfully.
+ * Uses GET + cache:no-store to bypass Next.js fetch caching.
  */
 async function pingUrl(url: string): Promise<boolean> {
   try {
     const res = await fetch(url, {
-      method: "HEAD",
-      signal: AbortSignal.timeout(5000),
+      method: "GET",
+      cache: "no-store",
+      signal: AbortSignal.timeout(8000),
     });
     return res.ok;
   } catch {
