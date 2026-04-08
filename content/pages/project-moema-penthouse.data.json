@@ -1,0 +1,39 @@
+{
+  "slug": "project-moema-penthouse",
+  "meta": {
+    "title": "Moema Penthouse | Atlas Architecture",
+    "description": "A luxury duplex penthouse in Moema where a terrace with pool becomes an outdoor living room, connected to the interior at every level."
+  },
+  "sections": [
+    {
+      "type": "project-detail",
+      "id": "moema-penthouse-detail",
+      "data": {
+        "name": "Moema Penthouse",
+        "location": "São Paulo, SP",
+        "year": "2021",
+        "category": "residential",
+        "description": "A duplex penthouse that makes the most of its elevated position. The terrace with pool becomes an outdoor living room, and the interior plan connects to it at every level — dissolving the boundary between inside and sky.",
+        "image": {
+          "src": "/media/project-moema-penthouse.svg",
+          "alt": "Luxury penthouse in Moema with terrace and pool"
+        },
+        "backLabel": "Back to portfolio",
+        "backHref": "/portfolio"
+      }
+    },
+    {
+      "type": "cta",
+      "id": "moema-penthouse-cta",
+      "data": {
+        "headline": "Have a project in mind?",
+        "text": "Let's talk about your vision and how we can bring it to life.",
+        "cta": {
+          "label": "Get in touch",
+          "href": "/contact",
+          "style": "secondary"
+        }
+      }
+    }
+  ]
+}

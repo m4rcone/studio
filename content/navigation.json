@@ -1,0 +1,25 @@
+{
+  "header": {
+    "links": [
+      { "label": "Home", "href": "/" },
+      { "label": "Portfolio", "href": "/portfolio" },
+      { "label": "Services", "href": "/services" },
+      { "label": "About", "href": "/about" },
+      { "label": "Contact", "href": "/contact" }
+    ],
+    "cta": {
+      "label": "Request a Quote",
+      "href": "https://wa.me/5511987654321",
+      "style": "primary"
+    }
+  },
+  "footer": {
+    "links": [
+      { "label": "Privacy Policy", "href": "/privacy" },
+      { "label": "Terms of Use", "href": "/terms" }
+    ],
+    "copyright": "© 2026 Atlas Architecture. All rights reserved.",
+    "contactLabel": "Contact",
+    "socialLabel": "Social Media"
+  }
+}

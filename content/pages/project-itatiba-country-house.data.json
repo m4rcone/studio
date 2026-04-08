@@ -1,0 +1,39 @@
+{
+  "slug": "project-itatiba-country-house",
+  "meta": {
+    "title": "Itatiba Country House | Atlas Architecture",
+    "description": "A rural retreat in Itatiba embedded in the Atlantic Forest landscape, with concrete and timber volumes that open every room to views of the surrounding hills."
+  },
+  "sections": [
+    {
+      "type": "project-detail",
+      "id": "itatiba-house-detail",
+      "data": {
+        "name": "Itatiba Country House",
+        "location": "Itatiba, SP",
+        "year": "2022",
+        "category": "residential",
+        "description": "A rural retreat embedded in the Atlantic Forest landscape. Concrete and timber volumes step down the natural slope, opening every room to views of the surrounding hills and integrating the house into its site rather than imposing upon it.",
+        "image": {
+          "src": "/media/project-itatiba-house.svg",
+          "alt": "Country house integrated with nature in Itatiba"
+        },
+        "backLabel": "Back to portfolio",
+        "backHref": "/portfolio"
+      }
+    },
+    {
+      "type": "cta",
+      "id": "itatiba-house-cta",
+      "data": {
+        "headline": "Have a project in mind?",
+        "text": "Let's talk about your vision and how we can bring it to life.",
+        "cta": {
+          "label": "Get in touch",
+          "href": "/contact",
+          "style": "secondary"
+        }
+      }
+    }
+  ]
+}

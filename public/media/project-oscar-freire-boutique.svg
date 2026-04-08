@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <rect width="800" height="600" fill="#f5f4f0"/>
+  <rect x="1" y="1" width="798" height="598" fill="none" stroke="#e0ddd6" stroke-width="1"/>
+  <line x1="0" y1="200" x2="800" y2="200" stroke="#e8e4de" stroke-width="0.5"/>
+  <line x1="0" y1="400" x2="800" y2="400" stroke="#e8e4de" stroke-width="0.5"/>
+  <line x1="267" y1="0" x2="267" y2="600" stroke="#e8e4de" stroke-width="0.5"/>
+  <line x1="533" y1="0" x2="533" y2="600" stroke="#e8e4de" stroke-width="0.5"/>
+  <rect x="352" y="248" width="96" height="72" rx="3" fill="none" stroke="#c9a96e" stroke-width="1.5"/>
+  <circle cx="400" cy="284" r="20" fill="none" stroke="#c9a96e" stroke-width="1.5"/>
+  <circle cx="400" cy="284" r="9" fill="none" stroke="#c9a96e" stroke-width="1"/>
+  <rect x="372" y="240" width="22" height="9" rx="2" fill="none" stroke="#c9a96e" stroke-width="1"/>
+  <text x="400" y="356" text-anchor="middle" font-family="Georgia, serif" font-size="15" fill="#1a1a1a" letter-spacing="1">Oscar Freire Boutique — Commercial</text>
+  <text x="400" y="376" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#c9a96e" letter-spacing="4">PLACEHOLDER · ATLAS ARQUITETURA</text>
+</svg>

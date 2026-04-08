@@ -1,0 +1,46 @@
+{
+  "brand": {
+    "name": "Atlas Architecture",
+    "tagline": "We design spaces that tell your story",
+    "logo": "/media/atlas-logo.svg"
+  },
+  "theme": {
+    "colors": {
+      "primary": "#1a1a1a",
+      "primary-foreground": "#ffffff",
+      "secondary": "#c9a96e",
+      "secondary-foreground": "#1a1a1a",
+      "background": "#fafaf8",
+      "foreground": "#1a1a1a",
+      "muted": "#f5f4f0",
+      "muted-foreground": "#6b6b6b"
+    },
+    "fonts": {
+      "heading": "DM Serif Display",
+      "body": "Inter"
+    },
+    "borderRadius": "0.125rem"
+  },
+  "contact": {
+    "phone": "(11) 3456-7890",
+    "whatsapp": "5511987654321",
+    "email": "contact@atlasarchitecture.com.br",
+    "address": {
+      "street": "Rua Oscar Freire, 980 - Sala 42",
+      "neighborhood": "Jardins",
+      "city": "São Paulo",
+      "state": "SP",
+      "zip": "01426-001"
+    }
+  },
+  "social": {
+    "instagram": "https://instagram.com/atlasarchitecture",
+    "facebook": null,
+    "linkedin": "https://linkedin.com/company/atlasarchitecture"
+  },
+  "seo": {
+    "defaultTitle": "Atlas Architecture | We design spaces that tell your story",
+    "titleTemplate": "%s | Atlas Architecture",
+    "defaultDescription": "Architecture and interior design studio in São Paulo. Residential and commercial projects with personalized service and realistic 3D visualization."
+  }
+}

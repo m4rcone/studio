@@ -1,0 +1,121 @@
+{
+  "slug": "about",
+  "meta": {
+    "title": "About",
+    "description": "Meet the story, philosophy, and team behind Atlas Architecture. 15 years designing spaces in São Paulo with a personalized approach."
+  },
+  "sections": [
+    {
+      "type": "page-header",
+      "id": "about-header",
+      "data": {
+        "eyebrow": "About us",
+        "title": "A studio built on excellence",
+        "subtitle": "Since 2010, we have designed spaces that reflect the unique identity of each client — with technical precision, aesthetic sensitivity, and a firm commitment to deadlines."
+      }
+    },
+    {
+      "type": "philosophy",
+      "id": "studio-philosophy",
+      "data": {
+        "eyebrow": "Our philosophy",
+        "headline": "We believe architecture is, above all, about people",
+        "body": "Every project starts with careful listening: we understand who our client is, how they live, what they dream of. Only then do we begin to design. Our approach combines technical rigor with creative freedom, always guided by open and transparent dialogue at every stage.",
+        "bodySecondary": "We believe a well-designed space goes far beyond aesthetics. It improves quality of life, enhances businesses, and creates lasting memories. This is the responsibility we bring to every project — from the smallest apartment to the largest corporate headquarters.",
+        "values": [
+          {
+            "id": "value-listening",
+            "title": "Active listening",
+            "description": "Every project starts with questions. We deeply understand our client before drawing the first line."
+          },
+          {
+            "id": "value-precision",
+            "title": "Technical precision",
+            "description": "Every design decision is grounded in calculation, codes, and 15 years of accumulated experience."
+          },
+          {
+            "id": "value-3d",
+            "title": "3D visualization",
+            "description": "Our differentiator: photorealistic rendering before construction, so you can approve every detail with confidence."
+          },
+          {
+            "id": "value-delivery",
+            "title": "Full commitment",
+            "description": "Deadlines and budgets are part of the project. We supervise construction from start to finish."
+          }
+        ]
+      }
+    },
+    {
+      "type": "team",
+      "id": "founding-partners",
+      "data": {
+        "eyebrow": "Team",
+        "headline": "The founding partners",
+        "description": "Atlas was founded by two architects with complementary backgrounds — one focused on high-end residential projects, the other specializing in corporate and commercial architecture.",
+        "members": [
+          {
+            "id": "partner-ana",
+            "name": "Ana Beatriz Carvalho",
+            "role": "Partner — Residential Projects",
+            "bio": "A graduate of FAU-USP with a specialization in Milan, Ana brings 18 years of experience in high-end residential work. Her signature is recognized for its balance between functionality and timeless elegance. Every residential project reflects the unique identity of those who live in it.",
+            "image": {
+              "src": "/media/team-ana-beatriz.svg",
+              "alt": "Ana Beatriz Carvalho, partner at Atlas Architecture"
+            }
+          },
+          {
+            "id": "partner-rafael",
+            "name": "Rafael Monteiro",
+            "role": "Partner — Corporate Projects",
+            "bio": "An architect from Mackenzie with an MBA in Project Management, Rafael leads Atlas's commercial and corporate projects. His strength lies in translating brand identity into spatial experience — creating environments that communicate and convert.",
+            "image": {
+              "src": "/media/team-rafael-monteiro.svg",
+              "alt": "Rafael Monteiro, partner at Atlas Architecture"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "timeline",
+      "id": "studio-history",
+      "data": {
+        "eyebrow": "Our story",
+        "headline": "A journey of achievements",
+        "events": [
+          {
+            "id": "event-founding",
+            "year": "2010",
+            "title": "Atlas is founded",
+            "description": "Ana and Rafael establish the studio in a small office in Jardins with a mission to create personalized architecture for discerning clients."
+          },
+          {
+            "id": "event-expansion",
+            "year": "2014",
+            "title": "Expansion into commercial",
+            "description": "First major corporate project: a 2,000m² headquarters for a tech company in Itaim Bibi — cementing dual-segment expertise."
+          },
+          {
+            "id": "event-award",
+            "year": "2017",
+            "title": "Casa Claudia Award",
+            "description": "National recognition for the Higienópolis Residence, a project that crystallizes the Atlas identity: contemporary, sophisticated, and human."
+          },
+          {
+            "id": "event-3d",
+            "year": "2019",
+            "title": "3D visualization standard",
+            "description": "Photorealistic rendering adopted as standard across all projects — a differentiator that becomes a benchmark in the São Paulo market."
+          },
+          {
+            "id": "event-present",
+            "year": "2024",
+            "title": "380 projects delivered",
+            "description": "With a team of 14 professionals, the studio celebrates 380 completed projects and a presence in São Paulo, Rio de Janeiro, and Brasília."
+          }
+        ]
+      }
+    }
+  ]
+}

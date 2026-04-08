@@ -1,0 +1,42 @@
+{
+  "name": "studio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "generate-theme": "node scripts/generate-theme.mjs",
+    "generate-favicon": "node scripts/generate-favicon.mjs",
+    "predev": "node scripts/generate-theme.mjs",
+    "dev": "next dev",
+    "prebuild": "node scripts/generate-theme.mjs",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "format": "prettier --write ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.85.0",
+    "@upstash/redis": "^1.37.0",
+    "jose": "^6.2.2",
+    "next": "^16.2.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "25.5.0",
+    "@types/react": "19.2.14",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.0",
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "tailwindcss": "^4.2.2",
+    "tsx": "^4.21.0",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "slug": "contact",
+  "meta": {
+    "title": "Contact",
+    "description": "Get in touch with Atlas Architecture. Request a quote for your residential or commercial project in São Paulo."
+  },
+  "sections": [
+    {
+      "type": "page-header",
+      "id": "contact-header",
+      "data": {
+        "eyebrow": "`Contact`",
+        "title": "Let's talk about your project",
+        "subtitle": "Fill out the form or reach us on WhatsApp. We respond within 24 business hours."
+      }
+    },
+    {
+      "type": "contact-section",
+      "id": "contact-form",
+      "data": {
+        "headline": "Request a quote",
+        "description": "Tell us about your project and we'll get in touch to schedule a no-commitment conversation. Every great project starts with a good conversation.",
+        "phone": "(11) 3456-7890",
+        "email": "contato@atlasarquitetura.com.br",
+        "address": "Rua Oscar Freire, 980 - Suite 42, Jardins, São Paulo/SP",
+        "hours": "Monday to Friday: 9am – 6pm · Saturday: 9am – 1pm",
+        "whatsappUrl": "https://wa.me/5511987654321",
+        "whatsappLabel": "Chat on WhatsApp",
+        "fields": [
+          {
+            "name": "name",
+            "label": "Full name",
+            "type": "text",
+            "required": true
+          },
+          {
+            "name": "email",
+            "label": "Email",
+            "type": "email",
+            "required": true
+          },
+          {
+            "name": "phone",
+            "label": "Phone / WhatsApp",
+            "type": "tel",
+            "required": true
+          },
+          {
+            "name": "project_type",
+            "label": "Project type",
+            "type": "text",
+            "required": false
+          },
+          {
+            "name": "message",
+            "label": "Tell us about your project",
+            "type": "textarea",
+            "required": true
+          }
+        ],
+        "submitLabel": "Send message",
+        "successMessage": "Message sent! We'll be in touch within 24 hours."
+      }
+    }
+  ]
+}

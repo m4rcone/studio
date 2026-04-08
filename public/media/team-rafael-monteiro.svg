@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800">
+  <rect width="600" height="800" fill="#f5f4f0"/>
+  <rect x="1" y="1" width="598" height="798" fill="none" stroke="#e0ddd6" stroke-width="1"/>
+  <line x1="0" y1="267" x2="600" y2="267" stroke="#e8e4de" stroke-width="0.5"/>
+  <line x1="0" y1="533" x2="600" y2="533" stroke="#e8e4de" stroke-width="0.5"/>
+  <line x1="200" y1="0" x2="200" y2="800" stroke="#e8e4de" stroke-width="0.5"/>
+  <line x1="400" y1="0" x2="400" y2="800" stroke="#e8e4de" stroke-width="0.5"/>
+  <!-- person silhouette placeholder -->
+  <circle cx="300" cy="320" r="52" fill="none" stroke="#c9a96e" stroke-width="1.5"/>
+  <circle cx="300" cy="296" r="20" fill="none" stroke="#c9a96e" stroke-width="1.5"/>
+  <path d="M 248 360 Q 300 340 352 360 L 360 400 Q 300 420 240 400 Z" fill="none" stroke="#c9a96e" stroke-width="1.5"/>
+  <text x="300" y="430" text-anchor="middle" font-family="Georgia, serif" font-size="15" fill="#1a1a1a" letter-spacing="1">Rafael Monteiro — Partner</text>
+  <text x="300" y="452" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#c9a96e" letter-spacing="4">PLACEHOLDER · ATLAS ARQUITETURA</text>
+</svg>

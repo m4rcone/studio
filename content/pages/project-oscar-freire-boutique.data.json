@@ -1,0 +1,39 @@
+{
+  "slug": "project-oscar-freire-boutique",
+  "meta": {
+    "title": "Oscar Freire Boutique | Atlas Architecture",
+    "description": "A luxury retail space on Oscar Freire where the architecture becomes part of the brand story, using curated materials and precise lighting."
+  },
+  "sections": [
+    {
+      "type": "project-detail",
+      "id": "oscar-freire-boutique-detail",
+      "data": {
+        "name": "Oscar Freire Boutique",
+        "location": "São Paulo, SP",
+        "year": "2023",
+        "category": "commercial",
+        "description": "A luxury retail space where the architecture becomes part of the brand story. Curated materials and precise lighting create an atmosphere of understated elegance, guiding customers through a sequence of carefully composed experiences.",
+        "image": {
+          "src": "/media/project-oscar-freire-boutique.svg",
+          "alt": "Sophisticated boutique interior on Oscar Freire"
+        },
+        "backLabel": "Back to portfolio",
+        "backHref": "/portfolio"
+      }
+    },
+    {
+      "type": "cta",
+      "id": "oscar-freire-cta",
+      "data": {
+        "headline": "Have a project in mind?",
+        "text": "Let's talk about your vision and how we can bring it to life.",
+        "cta": {
+          "label": "Get in touch",
+          "href": "/contact",
+          "style": "secondary"
+        }
+      }
+    }
+  ]
+}

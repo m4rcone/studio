@@ -1,0 +1,39 @@
+{
+  "slug": "project-berrini-corporate-hq",
+  "meta": {
+    "title": "Berrini Corporate HQ | Atlas Architecture",
+    "description": "A flagship headquarters in Berrini designed to express a technology company's identity, with public floors fostering collaboration and upper levels for executive focus."
+  },
+  "sections": [
+    {
+      "type": "project-detail",
+      "id": "berrini-hq-detail",
+      "data": {
+        "name": "Berrini Corporate HQ",
+        "location": "São Paulo, SP",
+        "year": "2022",
+        "category": "corporate",
+        "description": "A flagship headquarters designed to reflect the identity of a leading technology company. The lower floors are open and collaborative, fostering spontaneous exchange, while the upper levels provide the focused environment that executive teams require.",
+        "image": {
+          "src": "/media/project-berrini-headquarters.svg",
+          "alt": "Contemporary corporate headquarters in Berrini"
+        },
+        "backLabel": "Back to portfolio",
+        "backHref": "/portfolio"
+      }
+    },
+    {
+      "type": "cta",
+      "id": "berrini-hq-cta",
+      "data": {
+        "headline": "Have a project in mind?",
+        "text": "Let's talk about your vision and how we can bring it to life.",
+        "cta": {
+          "label": "Get in touch",
+          "href": "/contact",
+          "style": "secondary"
+        }
+      }
+    }
+  ]
+}

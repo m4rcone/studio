@@ -1,0 +1,39 @@
+{
+  "slug": "project-higienopolis-residence",
+  "meta": {
+    "title": "Higienópolis Residence | Atlas Architecture",
+    "description": "A contemporary residence in Higienópolis that balances clean lines with warm materials, connecting indoor living to an outdoor terrace."
+  },
+  "sections": [
+    {
+      "type": "project-detail",
+      "id": "higienopolis-residence-detail",
+      "data": {
+        "name": "Higienópolis Residence",
+        "location": "São Paulo, SP",
+        "year": "2024",
+        "category": "residential",
+        "description": "A contemporary residence that balances clean lines with warm materials. The open-plan living areas flow seamlessly to an outdoor terrace, while the private quarters offer a quiet retreat from the city.",
+        "image": {
+          "src": "/media/project-higienopolis-house.svg",
+          "alt": "Contemporary facade of a residence in Higienópolis"
+        },
+        "backLabel": "Back to portfolio",
+        "backHref": "/portfolio"
+      }
+    },
+    {
+      "type": "cta",
+      "id": "higienopolis-cta",
+      "data": {
+        "headline": "Have a project in mind?",
+        "text": "Let's talk about your vision and how we can bring it to life.",
+        "cta": {
+          "label": "Get in touch",
+          "href": "/contact",
+          "style": "secondary"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "slug": "home",
+  "meta": {
+    "title": "Home",
+    "description": "Atlas Architecture — Architecture and interior design studio in São Paulo. Residential and commercial projects with personalized service and 3D visualization."
+  },
+  "sections": [
+    {
+      "type": "hero",
+      "id": "main-hero",
+      "data": {
+        "headline": "We design spaces that tell your story",
+        "subheadline": "From concept to delivery, every project is developed with exclusive dedication — blending contemporary aesthetics with intelligent functionality.",
+        "cta": {
+          "label": "Request a Quote",
+          "href": "https://wa.me/5511987654321",
+          "style": "whatsapp"
+        },
+        "secondaryCta": {
+          "label": "Explore our portfolio",
+          "href": "/portfolio"
+        },
+        "image": {
+          "src": "/media/hero-main-project.svg",
+          "alt": "Contemporary living room designed by Atlas Architecture"
+        }
+      }
+    },
+    {
+      "type": "stats",
+      "id": "office-stats",
+      "data": {
+        "items": [
+          { "value": "15+", "label": "Years of experience" },
+          { "value": "380+", "label": "Projects delivered" },
+          { "value": "98%", "label": "Client satisfaction" },
+          { "value": "12", "label": "Awards won" }
+        ]
+      }
+    },
+    {
+      "type": "portfolio-preview",
+      "id": "featured-portfolio",
+      "data": {
+        "eyebrow": "Portfolio",
+        "headline": "Projects that transform spaces",
+        "subheadline": "A selection of our most recent work in residential and commercial architecture.",
+        "viewAllLabel": "View full portfolio",
+        "viewAllHref": "/portfolio",
+        "items": [
+          {
+            "id": "higienopolis-house",
+            "name": "Higienópolis Residence",
+            "location": "São Paulo, SP",
+            "category": "residential",
+            "image": {
+              "src": "/media/project-higienopolis-house.svg",
+              "alt": "Contemporary facade of a residence in Higienópolis"
+            },
+            "href": "/project-higienopolis-residence"
+          },
+          {
+            "id": "faria-lima-office",
+            "name": "Faria Lima Office",
+            "location": "São Paulo, SP",
+            "category": "corporate",
+            "image": {
+              "src": "/media/project-faria-lima-office.svg",
+              "alt": "Modern corporate environment at Faria Lima"
+            },
+            "href": "/project-faria-lima-office"
+          },
+          {
+            "id": "oscar-freire-boutique",
+            "name": "Oscar Freire Boutique",
+            "location": "São Paulo, SP",
+            "category": "commercial",
+            "image": {
+              "src": "/media/project-oscar-freire-boutique.svg",
+              "alt": "Sophisticated boutique interior on Oscar Freire"
+            },
+            "href": "/project-oscar-freire-boutique"
+          }
+        ]
+      }
+    },
+    {
+      "type": "testimonials",
+      "id": "client-testimonials",
+      "data": {
+        "eyebrow": "Testimonials",
+        "headline": "What our clients say",
+        "items": [
+          {
+            "id": "testimonial-marina",
+            "quote": "Atlas transformed our home into something we didn't even know we wanted. The process was transparent from start to finish, and the delivery exceeded all our expectations. We recommend them without hesitation.",
+            "name": "Marina & Rodrigo Fonseca",
+            "description": "Residence — Alto de Pinheiros, São Paulo"
+          },
+          {
+            "id": "testimonial-carlos",
+            "quote": "We needed a studio that could convey innovation and professionalism at the same time. Atlas captured exactly that balance. The 3D visualization was key in getting us on board before construction.",
+            "name": "Carlos Andrade",
+            "description": "Corporate HQ — Itaim Bibi, São Paulo"
+          },
+          {
+            "id": "testimonial-paula",
+            "quote": "Our store turned out exactly as I imagined, but better. They brought solutions I never would have thought of. The deadline was met and the budget respected.",
+            "name": "Paula Silveira",
+            "description": "Boutique — Jardins, São Paulo"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cta",
+      "id": "quote-cta",
+      "data": {
+        "headline": "Let's create something extraordinary together?",
+        "text": "Every project starts with a conversation. Get in touch and discover how we can transform your space.",
+        "cta": {
+          "label": "Chat on WhatsApp",
+          "href": "https://wa.me/5511987654321",
+          "style": "whatsapp"
+        }
+      }
+    }
+  ]
+}

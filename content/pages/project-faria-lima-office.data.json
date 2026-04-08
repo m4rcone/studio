@@ -1,0 +1,39 @@
+{
+  "slug": "project-faria-lima-office",
+  "meta": {
+    "title": "Faria Lima Office | Atlas Architecture",
+    "description": "A high-performance corporate workspace on Faria Lima designed around collaboration and focus, with a central meeting hub and private work areas."
+  },
+  "sections": [
+    {
+      "type": "project-detail",
+      "id": "faria-lima-office-detail",
+      "data": {
+        "name": "Faria Lima Office",
+        "location": "São Paulo, SP",
+        "year": "2024",
+        "category": "corporate",
+        "description": "A high-performance workplace designed around collaboration and focus. The open floor plan is anchored by a central meeting hub, with private focus rooms along the perimeter that give teams flexibility without sacrificing the sense of community.",
+        "image": {
+          "src": "/media/project-faria-lima-office.svg",
+          "alt": "Modern corporate environment at Faria Lima"
+        },
+        "backLabel": "Back to portfolio",
+        "backHref": "/portfolio"
+      }
+    },
+    {
+      "type": "cta",
+      "id": "faria-lima-cta",
+      "data": {
+        "headline": "Have a project in mind?",
+        "text": "Let's talk about your vision and how we can bring it to life.",
+        "cta": {
+          "label": "Get in touch",
+          "href": "/contact",
+          "style": "secondary"
+        }
+      }
+    }
+  ]
+}

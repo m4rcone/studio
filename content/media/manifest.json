@@ -1,0 +1,95 @@
+{
+  "images": [
+    {
+      "src": "/media/atlas-logo.svg",
+      "alt": "Atlas Architecture logo",
+      "width": 160,
+      "height": 40,
+      "usedIn": ["site.config.json"]
+    },
+    {
+      "src": "/media/hero-main-project.svg",
+      "alt": "Contemporary living room designed by Atlas Architecture",
+      "width": 800,
+      "height": 600,
+      "usedIn": ["home.data.json"]
+    },
+    {
+      "src": "/media/project-higienopolis-house.svg",
+      "alt": "Contemporary facade of a residence in Higienópolis",
+      "width": 800,
+      "height": 600,
+      "usedIn": ["home.data.json", "portfolio.data.json"]
+    },
+    {
+      "src": "/media/project-faria-lima-office.svg",
+      "alt": "Modern corporate environment at Faria Lima",
+      "width": 800,
+      "height": 600,
+      "usedIn": ["home.data.json", "portfolio.data.json"]
+    },
+    {
+      "src": "/media/project-oscar-freire-boutique.svg",
+      "alt": "Sophisticated boutique interior on Oscar Freire",
+      "width": 800,
+      "height": 600,
+      "usedIn": ["home.data.json", "portfolio.data.json"]
+    },
+    {
+      "src": "/media/project-vila-nova-apartment.svg",
+      "alt": "High-end apartment in Vila Nova Conceição",
+      "width": 800,
+      "height": 600,
+      "usedIn": ["portfolio.data.json"]
+    },
+    {
+      "src": "/media/project-jardins-hotel.svg",
+      "alt": "Boutique hotel lobby in Jardins",
+      "width": 800,
+      "height": 600,
+      "usedIn": ["portfolio.data.json"]
+    },
+    {
+      "src": "/media/project-berrini-headquarters.svg",
+      "alt": "Contemporary corporate headquarters in Berrini",
+      "width": 800,
+      "height": 600,
+      "usedIn": ["portfolio.data.json"]
+    },
+    {
+      "src": "/media/project-itatiba-house.svg",
+      "alt": "Country house integrated with nature in Itatiba",
+      "width": 800,
+      "height": 600,
+      "usedIn": ["portfolio.data.json"]
+    },
+    {
+      "src": "/media/project-itaim-restaurant.svg",
+      "alt": "Sophisticated dining environment in Itaim",
+      "width": 800,
+      "height": 600,
+      "usedIn": ["portfolio.data.json"]
+    },
+    {
+      "src": "/media/project-moema-penthouse.svg",
+      "alt": "Luxury penthouse in Moema with terrace and pool",
+      "width": 800,
+      "height": 600,
+      "usedIn": ["portfolio.data.json"]
+    },
+    {
+      "src": "/media/team-ana-beatriz.svg",
+      "alt": "Ana Beatriz Carvalho, partner at Atlas Architecture",
+      "width": 400,
+      "height": 400,
+      "usedIn": ["about.data.json"]
+    },
+    {
+      "src": "/media/team-rafael-monteiro.svg",
+      "alt": "Rafael Monteiro, partner at Atlas Architecture",
+      "width": 400,
+      "height": 400,
+      "usedIn": ["about.data.json"]
+    }
+  ]
+}

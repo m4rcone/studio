@@ -1,0 +1,61 @@
+export const STUDIO_STRINGS = {
+  auth: {
+    loginTitle: "Studio",
+    loginSubtitle: "Sign in to edit your site content",
+    usernameLabel: "Email",
+    usernamePlaceholder: "you@email.com",
+    passwordLabel: "Password",
+    passwordPlaceholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022",
+    loginButton: "Sign in",
+    loginError: "Invalid credentials. Please check your email and password.",
+    sessionExpired: "Session expired. Please sign in again.",
+    logoutButton: "Log out",
+  },
+  chat: {
+    placeholder: "Describe the change you'd like to make\u2026",
+    emptyState: "Start a conversation to edit your site content.",
+    sending: "Sending\u2026",
+    thinking: "Thinking\u2026",
+    applyButton: "Apply",
+    appliedLabel: "Applied",
+    applyError: "Failed to apply. Try again.",
+    rejectedLabel: "Rejected",
+  },
+  session: {
+    publishButton: "Publish",
+    discardButton: "Discard",
+    publishConfirm:
+      "Are you sure you want to publish these changes? They will be applied to the live site.",
+    discardConfirm:
+      "Are you sure you want to discard all changes in this session?",
+    publishSuccess: "Changes published successfully!",
+    discardSuccess: "Session discarded.",
+    statusActive: "Editing",
+    statusApproved: "Published",
+    statusDiscarded: "Discarded",
+    previewLabel: "Preview",
+    changesLabel: "Changes",
+    noChanges: "No changes yet",
+    cancelButton: "Cancel",
+  },
+  preview: {
+    unavailable: "Preview will be available after the first change.",
+    iframeFailed: "Could not load the preview. Try opening it in a new tab.",
+    openNewTab: "Open in new tab",
+    estimatedWarning:
+      "Estimated URL \u2014 the deployment may still be in progress",
+    showPreview: "Show preview",
+    hidePreview: "Hide preview",
+    loading: "Loading\u2026",
+  },
+  diff: {
+    before: "Before",
+    after: "After",
+  },
+  errors: {
+    network: "Connection error. Check your internet and try again.",
+    timeout: "The request took too long. Please try again.",
+    sessionLocked: "This session is being processed. Please wait a moment.",
+    generic: "Something went wrong. Please try again.",
+  },
+} as const;

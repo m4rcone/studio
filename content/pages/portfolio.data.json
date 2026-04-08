@@ -1,0 +1,135 @@
+{
+  "slug": "portfolio",
+  "meta": {
+    "title": "Portfolio",
+    "description": "Explore Atlas Architecture projects — residential, commercial, and corporate architecture and interior design in São Paulo."
+  },
+  "sections": [
+    {
+      "type": "page-header",
+      "id": "portfolio-header",
+      "data": {
+        "eyebrow": "Portfolio",
+        "title": "Every project, a unique story",
+        "subtitle": "A selection of our work in residential, commercial, and corporate architecture over the past 15 years."
+      }
+    },
+    {
+      "type": "portfolio-gallery",
+      "id": "projects-gallery",
+      "data": {
+        "allLabel": "All",
+        "projects": [
+          {
+            "id": "proj-01",
+            "name": "Higienópolis Residence",
+            "location": "São Paulo, SP",
+            "year": "2024",
+            "category": "residential",
+            "href": "/project-higienopolis-residence",
+            "image": {
+              "src": "/media/project-higienopolis-house.svg",
+              "alt": "Contemporary facade of a residence in Higienópolis"
+            }
+          },
+          {
+            "id": "proj-02",
+            "name": "Faria Lima Office",
+            "location": "São Paulo, SP",
+            "year": "2024",
+            "category": "corporate",
+            "href": "/project-faria-lima-office",
+            "image": {
+              "src": "/media/project-faria-lima-office.svg",
+              "alt": "Modern corporate environment at Faria Lima"
+            }
+          },
+          {
+            "id": "proj-03",
+            "name": "Oscar Freire Boutique",
+            "location": "São Paulo, SP",
+            "year": "2023",
+            "category": "commercial",
+            "href": "/project-oscar-freire-boutique",
+            "image": {
+              "src": "/media/project-oscar-freire-boutique.svg",
+              "alt": "Sophisticated boutique interior on Oscar Freire"
+            }
+          },
+          {
+            "id": "proj-04",
+            "name": "Vila Nova Apartment",
+            "location": "São Paulo, SP",
+            "year": "2023",
+            "category": "residential",
+            "href": "/project-vila-nova-apartment",
+            "image": {
+              "src": "/media/project-vila-nova-apartment.svg",
+              "alt": "High-end apartment in Vila Nova Conceição"
+            }
+          },
+          {
+            "id": "proj-05",
+            "name": "Jardins Boutique Hotel",
+            "location": "São Paulo, SP",
+            "year": "2023",
+            "category": "commercial",
+            "href": "/project-jardins-boutique-hotel",
+            "image": {
+              "src": "/media/project-jardins-hotel.svg",
+              "alt": "Boutique hotel lobby in Jardins"
+            }
+          },
+          {
+            "id": "proj-06",
+            "name": "Berrini Corporate HQ",
+            "location": "São Paulo, SP",
+            "year": "2022",
+            "category": "corporate",
+            "href": "/project-berrini-corporate-hq",
+            "image": {
+              "src": "/media/project-berrini-headquarters.svg",
+              "alt": "Contemporary corporate headquarters in Berrini"
+            }
+          },
+          {
+            "id": "proj-07",
+            "name": "Itatiba Country House",
+            "location": "Itatiba, SP",
+            "year": "2022",
+            "category": "residential",
+            "href": "/project-itatiba-country-house",
+            "image": {
+              "src": "/media/project-itatiba-house.svg",
+              "alt": "Country house integrated with nature in Itatiba"
+            }
+          },
+          {
+            "id": "proj-08",
+            "name": "Itaim Restaurant",
+            "location": "São Paulo, SP",
+            "year": "2022",
+            "category": "commercial",
+            "href": "/project-itaim-restaurant",
+            "image": {
+              "src": "/media/project-itaim-restaurant.svg",
+              "alt": "Sophisticated dining environment in Itaim"
+            }
+          },
+          {
+            "id": "proj-09",
+            "name": "Moema Penthouse",
+            "location": "São Paulo, SP",
+            "year": "2021",
+            "category": "residential",
+            "href": "/project-moema-penthouse",
+            "image": {
+              "src": "/media/project-moema-penthouse.svg",
+              "alt": "Luxury penthouse in Moema with terrace and pool"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

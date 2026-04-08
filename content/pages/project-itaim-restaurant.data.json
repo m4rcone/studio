@@ -1,0 +1,39 @@
+{
+  "slug": "project-itaim-restaurant",
+  "meta": {
+    "title": "Itaim Restaurant | Atlas Architecture",
+    "description": "A sophisticated dining environment in Itaim conceived as a stage for culinary experience, with a warm material palette and calibrated acoustics."
+  },
+  "sections": [
+    {
+      "type": "project-detail",
+      "id": "itaim-restaurant-detail",
+      "data": {
+        "name": "Itaim Restaurant",
+        "location": "São Paulo, SP",
+        "year": "2022",
+        "category": "commercial",
+        "description": "A dining environment conceived as a stage for culinary experience. The warm material palette and carefully calibrated acoustics invite guests to slow down and stay, making the architecture itself a part of the hospitality.",
+        "image": {
+          "src": "/media/project-itaim-restaurant.svg",
+          "alt": "Sophisticated dining environment in Itaim"
+        },
+        "backLabel": "Back to portfolio",
+        "backHref": "/portfolio"
+      }
+    },
+    {
+      "type": "cta",
+      "id": "itaim-restaurant-cta",
+      "data": {
+        "headline": "Have a project in mind?",
+        "text": "Let's talk about your vision and how we can bring it to life.",
+        "cta": {
+          "label": "Get in touch",
+          "href": "/contact",
+          "style": "secondary"
+        }
+      }
+    }
+  ]
+}

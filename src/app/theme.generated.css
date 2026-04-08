@@ -1,0 +1,14 @@
+/* AUTO-GENERATED — do not edit manually. Edit content/site.config.json instead. */
+@theme {
+  --color-primary: #1a1a1a;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #c9a96e;
+  --color-secondary-foreground: #1a1a1a;
+  --color-background: #fafaf8;
+  --color-foreground: #1a1a1a;
+  --color-muted: #f5f4f0;
+  --color-muted-foreground: #6b6b6b;
+  --font-heading: DM Serif Display, sans-serif;
+  --font-body: Inter, sans-serif;
+  --radius: 0.125rem;
+}

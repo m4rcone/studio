@@ -1,0 +1,39 @@
+{
+  "slug": "project-vila-nova-apartment",
+  "meta": {
+    "title": "Vila Nova Apartment | Atlas Architecture",
+    "description": "A complete renovation of a high-floor apartment in Vila Nova Conceição, maximizing natural light and framing city views through floor-to-ceiling glass."
+  },
+  "sections": [
+    {
+      "type": "project-detail",
+      "id": "vila-nova-apartment-detail",
+      "data": {
+        "name": "Vila Nova Apartment",
+        "location": "São Paulo, SP",
+        "year": "2023",
+        "category": "residential",
+        "description": "A complete renovation of a high-floor apartment in Vila Nova Conceição. The design maximizes natural light and frames panoramic views of the city through floor-to-ceiling glass, while a restrained material palette keeps the focus on the landscape beyond.",
+        "image": {
+          "src": "/media/project-vila-nova-apartment.svg",
+          "alt": "High-end apartment in Vila Nova Conceição"
+        },
+        "backLabel": "Back to portfolio",
+        "backHref": "/portfolio"
+      }
+    },
+    {
+      "type": "cta",
+      "id": "vila-nova-cta",
+      "data": {
+        "headline": "Have a project in mind?",
+        "text": "Let's talk about your vision and how we can bring it to life.",
+        "cta": {
+          "label": "Get in touch",
+          "href": "/contact",
+          "style": "secondary"
+        }
+      }
+    }
+  ]
+}

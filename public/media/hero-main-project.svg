@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  <rect width="800" height="1000" fill="#f5f4f0"/>
+  <rect x="1" y="1" width="798" height="998" fill="none" stroke="#e0ddd6" stroke-width="1"/>
+  <!-- grid lines -->
+  <line x1="0" y1="333" x2="800" y2="333" stroke="#e8e4de" stroke-width="0.5"/>
+  <line x1="0" y1="667" x2="800" y2="667" stroke="#e8e4de" stroke-width="0.5"/>
+  <line x1="267" y1="0" x2="267" y2="1000" stroke="#e8e4de" stroke-width="0.5"/>
+  <line x1="533" y1="0" x2="533" y2="1000" stroke="#e8e4de" stroke-width="0.5"/>
+  <!-- camera frame icon -->
+  <rect x="348" y="440" width="104" height="80" rx="4" fill="none" stroke="#c9a96e" stroke-width="1.5"/>
+  <circle cx="400" cy="480" r="22" fill="none" stroke="#c9a96e" stroke-width="1.5"/>
+  <circle cx="400" cy="480" r="10" fill="none" stroke="#c9a96e" stroke-width="1"/>
+  <rect x="370" y="432" width="24" height="10" rx="2" fill="none" stroke="#c9a96e" stroke-width="1"/>
+  <!-- text -->
+  <text x="400" y="570" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#1a1a1a" letter-spacing="1">Hero — Featured Project</text>
+  <text x="400" y="596" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#c9a96e" letter-spacing="4">PLACEHOLDER · ATLAS ARQUITETURA</text>
+</svg>

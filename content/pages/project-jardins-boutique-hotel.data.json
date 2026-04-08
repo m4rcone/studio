@@ -1,0 +1,39 @@
+{
+  "slug": "project-jardins-boutique-hotel",
+  "meta": {
+    "title": "Jardins Boutique Hotel | Atlas Architecture",
+    "description": "An intimate boutique hotel in Jardins that draws on the neighborhood's residential character to balance comfort and sophistication throughout."
+  },
+  "sections": [
+    {
+      "type": "project-detail",
+      "id": "jardins-hotel-detail",
+      "data": {
+        "name": "Jardins Boutique Hotel",
+        "location": "São Paulo, SP",
+        "year": "2023",
+        "category": "commercial",
+        "description": "An intimate hotel that draws on the residential character of Jardins. Every space balances comfort with sophistication — from the welcoming lobby to the guest suites — creating an environment that feels personal rather than institutional.",
+        "image": {
+          "src": "/media/project-jardins-hotel.svg",
+          "alt": "Boutique hotel lobby in Jardins"
+        },
+        "backLabel": "Back to portfolio",
+        "backHref": "/portfolio"
+      }
+    },
+    {
+      "type": "cta",
+      "id": "jardins-hotel-cta",
+      "data": {
+        "headline": "Have a project in mind?",
+        "text": "Let's talk about your vision and how we can bring it to life.",
+        "cta": {
+          "label": "Get in touch",
+          "href": "/contact",
+          "style": "secondary"
+        }
+      }
+    }
+  ]
+}
