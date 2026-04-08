@@ -12,7 +12,7 @@ const envSchema = z.object({
   STUDIO_PASSWORD: z.string().min(1),
   AUTH_SECRET: z.string().min(16),
   VERCEL_PROJECT_NAME: z.string().optional(),
-  VERCEL_TEAM_SLUG: z.string().min(1),
+  VERCEL_TEAM_SLUG: z.string().optional(),
 });
 
 export type StudioEnv = z.infer<typeof envSchema>;

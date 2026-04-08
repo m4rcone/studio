@@ -40,9 +40,23 @@ export function resolvePath(
     );
     if (idx === -1) return null;
     return {
-      parent: current as Record<string, unknown>,
+      parent: arr as unknown as Record<string, unknown>,
       key: String(idx),
       value: arr[idx],
+    };
+  }
+
+  // Last segment is a numeric array index — e.g. items[3]
+  if (lastSeg.type === "arrayIndex") {
+    const arr = (current as Record<string, unknown>)[
+      lastSeg.arrayField
+    ] as unknown[];
+    if (!Array.isArray(arr)) return null;
+    if (lastSeg.index < 0 || lastSeg.index >= arr.length) return null;
+    return {
+      parent: arr as unknown as Record<string, unknown>,
+      key: String(lastSeg.index),
+      value: arr[lastSeg.index],
     };
   }
 
@@ -61,34 +75,47 @@ interface PathSegmentArraySelector {
   matchValue: string;
 }
 
-type PathSegment = PathSegmentKey | PathSegmentArraySelector;
+interface PathSegmentArrayIndex {
+  type: "arrayIndex";
+  arrayField: string;
+  index: number;
+}
+
+type PathSegment =
+  | PathSegmentKey
+  | PathSegmentArraySelector
+  | PathSegmentArrayIndex;
 
 /**
  * Parse a path string like "sections[id=main-hero].data.headline"
- * into an array of segments.
+ * or "items[3].value" into an array of segments.
  */
 function parsePath(path: string): PathSegment[] {
   const segments: PathSegment[] = [];
-  const regex = /([a-zA-Z_$][\w$-]*)(?:\[(\w+)=([^\]]+)\])?/g;
-  let match: RegExpExecArray | null;
-
-  // Split by dots, but handle bracket notation
   const parts = path.split(".");
 
   for (const part of parts) {
-    regex.lastIndex = 0;
-    match = regex.exec(part);
-    if (match) {
-      const [, fieldName, matchKey, matchValue] = match;
-      if (matchKey && matchValue) {
+    const match = part.match(/^([a-zA-Z_$][\w$-]*)(?:\[([^\]]+)\])?$/);
+    if (!match) continue;
+    const [, fieldName, bracket] = match;
+    if (bracket === undefined) {
+      segments.push({ type: "key", name: fieldName });
+    } else {
+      const eqPos = bracket.indexOf("=");
+      if (eqPos === -1) {
+        // Numeric index: items[3]
+        const idx = parseInt(bracket, 10);
+        if (!isNaN(idx)) {
+          segments.push({ type: "arrayIndex", arrayField: fieldName, index: idx });
+        }
+      } else {
+        // Key=value selector: sections[id=main-hero]
         segments.push({
           type: "arraySelector",
           arrayField: fieldName,
-          matchKey,
-          matchValue,
+          matchKey: bracket.slice(0, eqPos),
+          matchValue: bracket.slice(eqPos + 1),
         });
-      } else {
-        segments.push({ type: "key", name: fieldName });
       }
     }
   }
@@ -114,6 +141,12 @@ function navigateSegment(obj: unknown, segment: PathSegment): unknown {
         (item as Record<string, unknown>)[segment.matchKey] ===
           segment.matchValue,
     );
+  }
+
+  if (segment.type === "arrayIndex") {
+    const arr = (obj as Record<string, unknown>)[segment.arrayField];
+    if (!Array.isArray(arr)) return undefined;
+    return arr[segment.index];
   }
 
   return undefined;

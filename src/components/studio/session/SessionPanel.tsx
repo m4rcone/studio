@@ -92,17 +92,23 @@ export function SessionPanel({
         {/* Preview toggle */}
         {preview && (
           <div className="mt-4 flex items-center gap-3">
-            <button
-              onClick={() => setShowPreview(!showPreview)}
-              className="st-focus-ring text-xs text-(--st-accent) underline underline-offset-4 hover:text-(--st-accent-hover)"
-            >
-              {showPreview
-                ? STUDIO_STRINGS.preview.hidePreview
-                : STUDIO_STRINGS.preview.showPreview}
-            </button>
-            {(preview.url || preview.estimatedUrl) && (
+            {preview.url ? (
+              <button
+                onClick={() => setShowPreview(!showPreview)}
+                className="st-focus-ring text-xs text-(--st-accent) underline underline-offset-4 hover:text-(--st-accent-hover)"
+              >
+                {showPreview
+                  ? STUDIO_STRINGS.preview.hidePreview
+                  : STUDIO_STRINGS.preview.showPreview}
+              </button>
+            ) : (
+              <span className="text-xs text-(--st-text-muted)">
+                {STUDIO_STRINGS.preview.estimatedWarning}
+              </span>
+            )}
+            {preview.url && (
               <a
-                href={preview.url || preview.estimatedUrl || "#"}
+                href={preview.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="st-focus-ring text-xs text-(--st-text-muted) underline underline-offset-4 hover:text-(--st-text)"
@@ -114,8 +120,8 @@ export function SessionPanel({
         )}
       </div>
 
-      {/* Preview iframe */}
-      {showPreview && preview && (
+      {/* Preview iframe — only when deployment URL is confirmed ready */}
+      {showPreview && preview?.url && (
         <div className="min-h-75 flex-1">
           <PreviewFrame url={preview.url} estimatedUrl={preview.estimatedUrl} />
         </div>
