@@ -29,20 +29,25 @@ export function SessionPanel({
   const s = STUDIO_STRINGS.session;
   const p = STUDIO_STRINGS.preview;
   const [preview, setPreview] = useState<PreviewState | null>(null);
+  const sessionId = session?.id ?? null;
+  const branch = session?.branch ?? null;
 
   useEffect(() => {
-    if (!session?.branch || !session?.id) {
+    if (!branch || !sessionId) {
       return;
     }
+    const currentSessionId = sessionId;
     let cancelled = false;
 
     async function fetchPreview() {
       try {
-        const res = await fetch(`/api/studio/sessions/${session.id}/preview`);
+        const res = await fetch(
+          `/api/studio/sessions/${currentSessionId}/preview`,
+        );
         if (!res.ok || cancelled) return;
 
         const nextPreview = (await res.json()) as PreviewStatus;
-        setPreview({ sessionId: session.id, ...nextPreview });
+        setPreview({ sessionId: currentSessionId, ...nextPreview });
       } catch {
         // Ignore
       }
@@ -57,7 +62,7 @@ export function SessionPanel({
       cancelled = true;
       clearInterval(interval);
     };
-  }, [session?.branch, session?.id]);
+  }, [branch, sessionId]);
 
   if (!session) {
     return (
