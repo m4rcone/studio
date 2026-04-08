@@ -50,14 +50,37 @@ export async function getDeploymentStatus(
 }
 
 /**
- * Returns the clean Vercel URL with the bypass query param appended — only used
- * server-side to produce redirect targets. Never embed this in client HTML directly.
+ * Append the Vercel automation bypass query parameter to a URL.
+ * This allows browser clients (links, iframes) to access protected preview deployments.
  */
-export function buildBypassUrl(url: string): string {
+function withBypass(url: string): string {
   const env = getEnv();
   if (!env.VERCEL_AUTOMATION_BYPASS_SECRET) return url;
-  const separator = url.includes("?") ? "&" : "?";
-  return `${url}${separator}x-vercel-protection-bypass=${env.VERCEL_AUTOMATION_BYPASS_SECRET}`;
+  try {
+    const previewUrl = new URL(url);
+    previewUrl.searchParams.set(
+      "x-vercel-protection-bypass",
+      env.VERCEL_AUTOMATION_BYPASS_SECRET,
+    );
+    previewUrl.searchParams.set(
+      "x-vercel-set-bypass-cookie",
+      "samesitenone",
+    );
+    return previewUrl.toString();
+  } catch {
+    const separator = url.includes("?") ? "&" : "?";
+    const bypassParam = `x-vercel-protection-bypass=${encodeURIComponent(
+      env.VERCEL_AUTOMATION_BYPASS_SECRET,
+    )}`;
+    const cookieParam = "x-vercel-set-bypass-cookie=samesitenone";
+    const hasBypass = url.includes("x-vercel-protection-bypass=");
+    const hasCookie = url.includes("x-vercel-set-bypass-cookie=");
+
+    if (hasBypass && hasCookie) return url;
+    if (hasBypass) return `${url}&${cookieParam}`;
+    if (hasCookie) return `${url}${separator}${bypassParam}`;
+    return `${url}${separator}${bypassParam}&${cookieParam}`;
+  }
 }
 
 /**
