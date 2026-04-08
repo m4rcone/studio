@@ -18,7 +18,7 @@ export function StudioShell() {
   const {
     session,
     error: sessionError,
-    createSession,
+    restoreOrCreateSession,
     refreshSession,
     approveSession,
     discardSession,
@@ -35,9 +35,9 @@ export function StudioShell() {
 
   useEffect(() => {
     if (user && !session) {
-      createSession();
+      restoreOrCreateSession();
     }
-  }, [user, session, createSession]);
+  }, [user, session, restoreOrCreateSession]);
 
   useEffect(() => {
     if (!isStreaming && session?.id) {
@@ -126,7 +126,7 @@ export function StudioShell() {
           </svg>
           <p className="text-xs text-(--st-danger)">{sessionError}</p>
           <button
-            onClick={() => createSession()}
+            onClick={() => restoreOrCreateSession()}
             className="st-focus-ring ml-auto text-xs text-(--st-danger) underline underline-offset-2 hover:opacity-80"
           >
             Retry

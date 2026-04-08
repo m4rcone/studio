@@ -9,7 +9,7 @@ interface DeploymentStatus {
 
 /**
  * Get the current deployment status for a branch.
- * Uses GitHub Deployments API with polling backoff.
+ * Tries GitHub Deployments API first, falls back to pinging the estimated URL.
  */
 export async function getDeploymentStatus(
   branch: string,
@@ -18,26 +18,48 @@ export async function getDeploymentStatus(
 
   try {
     const deployment = await github.getLatestDeployment(branch);
-    if (!deployment) {
-      return { status: "building", url: null, estimatedUrl };
+    if (deployment) {
+      const status = await github.getDeploymentStatus(deployment.id);
+      if (status) {
+        if (status.state === "success") {
+          return {
+            status: "ready",
+            url: status.url || estimatedUrl,
+            estimatedUrl,
+          };
+        }
+        if (status.state === "failure" || status.state === "error") {
+          return { status: "error", url: null, estimatedUrl };
+        }
+        // Still building per GitHub — skip URL ping to avoid false positives
+        return { status: "building", url: null, estimatedUrl };
+      }
     }
-
-    const status = await github.getDeploymentStatus(deployment.id);
-    if (!status) {
-      return { status: "building", url: null, estimatedUrl };
-    }
-
-    if (status.state === "success") {
-      return { status: "ready", url: status.url || estimatedUrl, estimatedUrl };
-    }
-
-    if (status.state === "failure" || status.state === "error") {
-      return { status: "error", url: null, estimatedUrl };
-    }
-
-    return { status: "building", url: null, estimatedUrl };
   } catch {
-    return { status: "unknown", url: null, estimatedUrl };
+    // GitHub API unavailable — fall through to URL ping
+  }
+
+  // Fallback: ping the estimated URL directly
+  const isLive = await pingUrl(estimatedUrl);
+  if (isLive) {
+    return { status: "ready", url: estimatedUrl, estimatedUrl };
+  }
+
+  return { status: "building", url: null, estimatedUrl };
+}
+
+/**
+ * Ping a URL to check if it responds successfully.
+ */
+async function pingUrl(url: string): Promise<boolean> {
+  try {
+    const res = await fetch(url, {
+      method: "HEAD",
+      signal: AbortSignal.timeout(5000),
+    });
+    return res.ok;
+  } catch {
+    return false;
   }
 }
 

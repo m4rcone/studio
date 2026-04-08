@@ -4,6 +4,25 @@ import { useState, useCallback } from "react";
 import type { StudioSession } from "@/lib/studio/types";
 import { STUDIO_STRINGS } from "@/lib/studio/constants";
 
+const SESSION_STORAGE_KEY = "studio_session_id";
+
+function getSavedSessionId(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(SESSION_STORAGE_KEY);
+}
+
+function saveSessionId(id: string): void {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(SESSION_STORAGE_KEY, id);
+  }
+}
+
+function clearSavedSessionId(): void {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+  }
+}
+
 export function useSession() {
   const [session, setSession] = useState<StudioSession | null>(null);
   const [loading, setLoading] = useState(false);
@@ -21,6 +40,7 @@ export function useSession() {
         return null;
       }
       const data = await res.json();
+      saveSessionId(data.id);
       setSession(data);
       return data as StudioSession;
     } catch {
@@ -30,6 +50,34 @@ export function useSession() {
       setLoading(false);
     }
   }, []);
+
+  /**
+   * Try to restore a previously active session from localStorage.
+   * Falls back to creating a new session if the saved one is gone or terminal.
+   */
+  const restoreOrCreateSession = useCallback(async () => {
+    const savedId = getSavedSessionId();
+    if (savedId) {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/studio/sessions/${savedId}`);
+        if (res.ok) {
+          const data: StudioSession = await res.json();
+          if (data.status === "active") {
+            setSession(data);
+            setLoading(false);
+            return data;
+          }
+        }
+      } catch {
+        // Fall through to create a new session
+      } finally {
+        setLoading(false);
+      }
+      clearSavedSessionId();
+    }
+    return createSession();
+  }, [createSession]);
 
   const refreshSession = useCallback(async (sessionId: string) => {
     const res = await fetch(`/api/studio/sessions/${sessionId}`);
@@ -45,6 +93,7 @@ export function useSession() {
       method: "POST",
     });
     if (res.ok) {
+      clearSavedSessionId();
       setSession((prev) => (prev ? { ...prev, status: "approved" } : null));
     }
   }, [session]);
@@ -55,6 +104,7 @@ export function useSession() {
       method: "DELETE",
     });
     if (res.ok) {
+      clearSavedSessionId();
       setSession((prev) => (prev ? { ...prev, status: "discarded" } : null));
     }
   }, [session]);
@@ -65,6 +115,7 @@ export function useSession() {
     error,
     setSession,
     createSession,
+    restoreOrCreateSession,
     refreshSession,
     approveSession,
     discardSession,
