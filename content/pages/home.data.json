@@ -31,10 +31,22 @@
       "id": "office-stats",
       "data": {
         "items": [
-          { "value": "15+", "label": "Years of experience" },
-          { "value": "380+", "label": "Projects delivered" },
-          { "value": "98%", "label": "Client satisfaction" },
-          { "value": "12", "label": "Awards won" }
+          {
+            "value": "15+",
+            "label": "Years of experience"
+          },
+          {
+            "value": "380+",
+            "label": "Projects delivered"
+          },
+          {
+            "value": "98%",
+            "label": "Client satisfaction"
+          },
+          {
+            "value": "13",
+            "label": "Awards won"
+          }
         ]
       }
     },
