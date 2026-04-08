@@ -42,14 +42,7 @@ export const STUDIO_STRINGS = {
     cancelButton: "Cancel",
   },
   preview: {
-    unavailable: "Preview will be available after the first change.",
-    iframeFailed: "Could not load the preview. Try opening it in a new tab.",
     openNewTab: "Open in new tab",
-    estimatedWarning: "Deployment in progress\u2026",
-    checking: "Checking\u2026",
-    checkNow: "Check now",
-    showPreview: "Show preview",
-    hidePreview: "Hide preview",
     loading: "Loading\u2026",
   },
   diff: {

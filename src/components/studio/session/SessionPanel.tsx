@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useState } from "react";
 import type { StudioSession } from "@/lib/studio/types";
 import { STUDIO_STRINGS } from "@/lib/studio/constants";
-import { PreviewFrame } from "./PreviewFrame";
 import { StudioButton } from "../ui/StudioButton";
 
 interface SessionPanelProps {
@@ -18,6 +17,10 @@ interface PreviewStatus {
   estimatedUrl: string | null;
 }
 
+interface PreviewState extends PreviewStatus {
+  sessionId: string;
+}
+
 export function SessionPanel({
   session,
   onApprove,
@@ -25,35 +28,36 @@ export function SessionPanel({
 }: SessionPanelProps) {
   const s = STUDIO_STRINGS.session;
   const p = STUDIO_STRINGS.preview;
-  const [preview, setPreview] = useState<PreviewStatus | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
-  const [isChecking, setIsChecking] = useState(false);
-
-  const fetchPreview = useCallback(async () => {
-    if (!session?.id) return;
-    try {
-      const res = await fetch(`/api/studio/sessions/${session.id}/preview`);
-      if (res.ok) setPreview(await res.json());
-    } catch {
-      // Ignore
-    }
-  }, [session?.id]);
+  const [preview, setPreview] = useState<PreviewState | null>(null);
 
   useEffect(() => {
     if (!session?.branch || !session?.id) {
-      setPreview(null);
       return;
     }
-    fetchPreview();
-    const interval = setInterval(fetchPreview, 8000);
-    return () => clearInterval(interval);
-  }, [session?.branch, session?.id, fetchPreview]);
+    let cancelled = false;
 
-  async function handleCheckNow() {
-    setIsChecking(true);
-    await fetchPreview();
-    setIsChecking(false);
-  }
+    async function fetchPreview() {
+      try {
+        const res = await fetch(`/api/studio/sessions/${session.id}/preview`);
+        if (!res.ok || cancelled) return;
+
+        const nextPreview = (await res.json()) as PreviewStatus;
+        setPreview({ sessionId: session.id, ...nextPreview });
+      } catch {
+        // Ignore
+      }
+    }
+
+    void fetchPreview();
+    const interval = setInterval(() => {
+      void fetchPreview();
+    }, 8000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [session?.branch, session?.id]);
 
   if (!session) {
     return (
@@ -63,8 +67,9 @@ export function SessionPanel({
     );
   }
 
-  const activeUrl = preview?.url;
-  const estimatedUrl = preview?.estimatedUrl;
+  const activePreview = preview?.sessionId === session.id ? preview : null;
+  const activeUrl = activePreview?.url;
+  const estimatedUrl = activePreview?.estimatedUrl;
 
   return (
     <div className="flex h-full flex-col">
@@ -96,27 +101,6 @@ export function SessionPanel({
         {/* Preview controls */}
         {estimatedUrl && (
           <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-            {activeUrl ? (
-              <button
-                onClick={() => setShowPreview(!showPreview)}
-                className="st-focus-ring text-xs text-(--st-accent) underline underline-offset-4 hover:text-(--st-accent-hover)"
-              >
-                {showPreview ? p.hidePreview : p.showPreview}
-              </button>
-            ) : (
-              <>
-                <span className="text-xs text-(--st-text-muted)">
-                  {isChecking ? p.checking : p.estimatedWarning}
-                </span>
-                <button
-                  onClick={handleCheckNow}
-                  disabled={isChecking}
-                  className="st-focus-ring text-xs text-(--st-accent) underline underline-offset-4 hover:text-(--st-accent-hover) disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {p.checkNow}
-                </button>
-              </>
-            )}
             <a
               href={activeUrl ?? estimatedUrl}
               target="_blank"
@@ -128,13 +112,6 @@ export function SessionPanel({
           </div>
         )}
       </div>
-
-      {/* Preview iframe — only when deployment URL is confirmed ready */}
-      {showPreview && activeUrl && (
-        <div className="min-h-75 flex-1">
-          <PreviewFrame url={activeUrl} estimatedUrl={estimatedUrl ?? null} />
-        </div>
-      )}
 
       {/* Actions */}
       {session.status === "active" && session.prNumber && (
