@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducer, useCallback } from "react";
+import { useReducer, useCallback, useEffect, useRef } from "react";
 import { useStreamingResponse } from "./useStreamingResponse";
 import type { StreamEvent, FileDiff } from "@/lib/studio/types";
 
@@ -31,7 +31,9 @@ type ChatAction =
     }
   | { type: "STOP_STREAMING" }
   | { type: "SET_ERROR"; error: string }
-  | { type: "CLEAR_ERROR" };
+  | { type: "CLEAR_ERROR" }
+  | { type: "SET_MESSAGES"; messages: UIChatMessage[] }
+  | { type: "RESET" };
 
 function chatReducer(state: ChatState, action: ChatAction): ChatState {
   switch (action.type) {
@@ -83,10 +85,45 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
       return { ...state, error: action.error, isStreaming: false };
     case "CLEAR_ERROR":
       return { ...state, error: null };
+    case "SET_MESSAGES":
+      return { ...state, messages: action.messages };
+    case "RESET":
+      return { messages: [], isStreaming: false, error: null };
     default:
       return state;
   }
 }
+
+// ─── localStorage helpers ────────────────────────────────────────────────────
+
+const messagesKey = (sessionId: string) => `studio_messages_${sessionId}`;
+
+function loadMessages(sessionId: string): UIChatMessage[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(messagesKey(sessionId));
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveMessages(sessionId: string, messages: UIChatMessage[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(messagesKey(sessionId), JSON.stringify(messages));
+  } catch {
+    // Ignore quota errors
+  }
+}
+
+export function clearChatHistory(sessionId: string): void {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(messagesKey(sessionId));
+  }
+}
+
+// ─── Hook ────────────────────────────────────────────────────────────────────
 
 export function useChat(sessionId: string | null) {
   const [state, dispatch] = useReducer(chatReducer, {
@@ -96,6 +133,28 @@ export function useChat(sessionId: string | null) {
   });
 
   const { stream, abort } = useStreamingResponse();
+
+  // Reset and reload messages when sessionId changes
+  const prevSessionIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (prevSessionIdRef.current === sessionId) return;
+    prevSessionIdRef.current = sessionId;
+
+    dispatch({ type: "RESET" });
+
+    if (sessionId) {
+      const saved = loadMessages(sessionId);
+      if (saved.length > 0) {
+        dispatch({ type: "SET_MESSAGES", messages: saved });
+      }
+    }
+  }, [sessionId]);
+
+  // Persist messages to localStorage after each completed exchange (not while streaming)
+  useEffect(() => {
+    if (!sessionId || state.isStreaming || state.messages.length === 0) return;
+    saveMessages(sessionId, state.messages);
+  }, [sessionId, state.messages, state.isStreaming]);
 
   const sendMessage = useCallback(
     async (content: string) => {

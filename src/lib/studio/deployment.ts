@@ -31,8 +31,7 @@ export async function getDeploymentStatus(
         if (status.state === "failure" || status.state === "error") {
           return { status: "error", url: null, estimatedUrl };
         }
-        // Still building per GitHub — skip URL ping to avoid false positives
-        return { status: "building", url: null, estimatedUrl };
+        // Not confirmed yet — fall through to URL ping as secondary check
       }
     }
   } catch {

@@ -109,6 +109,18 @@ export function useSession() {
     }
   }, [session]);
 
+  /**
+   * Start a fresh session without discarding the current PR on GitHub.
+   * Returns the sessionId that was cleared (so caller can clear its chat history).
+   */
+  const startNewSession = useCallback(async (): Promise<string | null> => {
+    const oldId = session?.id ?? null;
+    clearSavedSessionId();
+    setSession(null);
+    await createSession();
+    return oldId;
+  }, [session, createSession]);
+
   return {
     session,
     loading,
@@ -119,5 +131,6 @@ export function useSession() {
     refreshSession,
     approveSession,
     discardSession,
+    startNewSession,
   };
 }

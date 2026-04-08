@@ -8,6 +8,7 @@ interface StudioHeaderProps {
   userName: string | null;
   sessionStatus?: string;
   statusVariant?: "active" | "approved" | "discarded";
+  onNewChat?: () => void;
   onLogout: () => void;
 }
 
@@ -15,6 +16,7 @@ export function StudioHeader({
   userName,
   sessionStatus,
   statusVariant = "active",
+  onNewChat,
   onLogout,
 }: StudioHeaderProps) {
   return (
@@ -44,6 +46,11 @@ export function StudioHeader({
       <div className="flex items-center gap-3">
         {userName && (
           <span className="text-xs text-(--st-text-muted)">{userName}</span>
+        )}
+        {onNewChat && (
+          <StudioButton variant="ghost" size="sm" onClick={onNewChat}>
+            {STUDIO_STRINGS.session.newChatButton}
+          </StudioButton>
         )}
         <StudioButton variant="ghost" size="sm" onClick={onLogout}>
           {STUDIO_STRINGS.auth.logoutButton}

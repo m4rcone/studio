@@ -5,7 +5,7 @@ import { StudioHeader } from "./StudioHeader";
 import { StatusPill } from "./StatusPill";
 import { useAuth } from "@/hooks/studio/useAuth";
 import { useSession } from "@/hooks/studio/useSession";
-import { useChat } from "@/hooks/studio/useChat";
+import { useChat, clearChatHistory } from "@/hooks/studio/useChat";
 import { ChatPanel } from "../chat/ChatPanel";
 import { SessionPanel } from "../session/SessionPanel";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
@@ -22,13 +22,14 @@ export function StudioShell() {
     refreshSession,
     approveSession,
     discardSession,
+    startNewSession,
   } = useSession();
   const { messages, isStreaming, error, sendMessage } = useChat(
     session?.id ?? null,
   );
   const [mobileTab, setMobileTab] = useState<MobileTab>("chat");
   const [confirmAction, setConfirmAction] = useState<
-    "publish" | "discard" | null
+    "publish" | "discard" | "new-chat" | null
   >(null);
 
   const s = STUDIO_STRINGS.session;
@@ -66,7 +67,11 @@ export function StudioShell() {
     if (confirmAction === "publish") {
       await approveSession();
     } else if (confirmAction === "discard") {
+      if (session) clearChatHistory(session.id);
       await discardSession();
+    } else if (confirmAction === "new-chat") {
+      const oldId = await startNewSession();
+      if (oldId) clearChatHistory(oldId);
     }
     setConfirmAction(null);
   }
@@ -137,6 +142,7 @@ export function StudioShell() {
         userName={user?.sub ?? null}
         sessionStatus={statusLabel}
         statusVariant={statusVariant}
+        onNewChat={() => setConfirmAction("new-chat")}
         onLogout={logout}
       />
 
@@ -220,6 +226,14 @@ export function StudioShell() {
         onConfirm={handleConfirm}
         onCancel={() => setConfirmAction(null)}
         variant="danger"
+      />
+      <ConfirmDialog
+        open={confirmAction === "new-chat"}
+        title={s.newChatButton}
+        description={s.newChatConfirm}
+        confirmLabel={s.newChatButton}
+        onConfirm={handleConfirm}
+        onCancel={() => setConfirmAction(null)}
       />
     </div>
   );

@@ -24,10 +24,13 @@ export const STUDIO_STRINGS = {
   session: {
     publishButton: "Publish",
     discardButton: "Discard",
+    newChatButton: "New chat",
     publishConfirm:
       "Are you sure you want to publish these changes? They will be applied to the live site.",
     discardConfirm:
       "Are you sure you want to discard all changes in this session?",
+    newChatConfirm:
+      "Start a new conversation? The current session and chat history will be cleared.",
     publishSuccess: "Changes published successfully!",
     discardSuccess: "Session discarded.",
     statusActive: "Editing",
