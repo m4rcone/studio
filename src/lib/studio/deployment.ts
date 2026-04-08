@@ -50,7 +50,7 @@ function buildEstimatedUrl(branch: string): string {
   const projectName = env.VERCEL_PROJECT_NAME ?? env.GITHUB_REPO;
   const sanitizedBranch = branch.replace(/\//g, "-");
   // Team scope is typically the GitHub owner
-  return `https://${projectName}-git-${sanitizedBranch}-${env.GITHUB_OWNER}.vercel.app`;
+  return `https://${projectName}-git-${sanitizedBranch}-${env.VERCEL_TEAM_SLUG}.vercel.app`;
 }
 
 /**
