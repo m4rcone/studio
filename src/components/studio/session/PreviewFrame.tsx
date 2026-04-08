@@ -3,15 +3,16 @@
 import { useState, useCallback } from "react";
 import { STUDIO_STRINGS } from "@/lib/studio/constants";
 import { StudioButton } from "../ui/StudioButton";
+import { withBypass } from "@/lib/studio/deployment";
 
 interface PreviewFrameProps {
   url: string | null;
-  estimatedUrl: string | null;
+  estimatedUrl: string;
 }
 
 export function PreviewFrame({ url, estimatedUrl }: PreviewFrameProps) {
   const [iframeFailed, setIframeFailed] = useState(false);
-  const previewUrl = url || estimatedUrl;
+  const previewUrl = withBypass(url || estimatedUrl);
   const s = STUDIO_STRINGS.preview;
 
   const handleError = useCallback(() => {

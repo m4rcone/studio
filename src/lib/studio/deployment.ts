@@ -31,7 +31,11 @@ export async function getDeploymentStatus(
           };
         }
         if (status.state === "failure" || status.state === "error") {
-          return { status: "error", url: null, estimatedUrl: estimatedUrlForClient };
+          return {
+            status: "error",
+            url: null,
+            estimatedUrl: estimatedUrlForClient,
+          };
         }
         // Not confirmed yet — fall through to URL ping as secondary check
       }
@@ -43,7 +47,11 @@ export async function getDeploymentStatus(
   // Fallback: ping the estimated URL directly (using header bypass, not query param)
   const isLive = await pingUrl(estimatedUrl);
   if (isLive) {
-    return { status: "ready", url: estimatedUrlForClient, estimatedUrl: estimatedUrlForClient };
+    return {
+      status: "ready",
+      url: estimatedUrlForClient,
+      estimatedUrl: estimatedUrlForClient,
+    };
   }
 
   return { status: "building", url: null, estimatedUrl: estimatedUrlForClient };
@@ -53,7 +61,7 @@ export async function getDeploymentStatus(
  * Append the Vercel automation bypass query parameter to a URL.
  * This allows browser clients (links, iframes) to access protected preview deployments.
  */
-function withBypass(url: string): string {
+export function withBypass(url: string): string {
   const env = getEnv();
   if (!env.VERCEL_AUTOMATION_BYPASS_SECRET) return url;
   try {
@@ -62,10 +70,7 @@ function withBypass(url: string): string {
       "x-vercel-protection-bypass",
       env.VERCEL_AUTOMATION_BYPASS_SECRET,
     );
-    previewUrl.searchParams.set(
-      "x-vercel-set-bypass-cookie",
-      "samesitenone",
-    );
+    previewUrl.searchParams.set("x-vercel-set-bypass-cookie", "samesitenone");
     return previewUrl.toString();
   } catch {
     const separator = url.includes("?") ? "&" : "?";
