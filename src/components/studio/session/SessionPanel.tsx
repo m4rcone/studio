@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { StudioSession } from "@/lib/studio/types";
 import { STUDIO_STRINGS } from "@/lib/studio/constants";
 import { PreviewFrame } from "./PreviewFrame";
@@ -18,32 +18,6 @@ interface PreviewStatus {
   estimatedUrl: string | null;
 }
 
-/**
- * Client-side deployment probe using an <img> element pointing to /favicon.ico.
- * Works without CORS and without server-side caching issues.
- * Returns true when the deployment is serving content (favicon loads = site is up).
- */
-function probeDeployment(baseUrl: string): Promise<boolean> {
-  return new Promise((resolve) => {
-    const img = new window.Image();
-    const timer = setTimeout(() => {
-      img.onload = null;
-      img.onerror = null;
-      resolve(false);
-    }, 8000);
-    img.onload = () => {
-      clearTimeout(timer);
-      resolve(true);
-    };
-    img.onerror = () => {
-      clearTimeout(timer);
-      resolve(false);
-    };
-    // Cache-bust to avoid browser caching a previous 404
-    img.src = `${baseUrl}/favicon.ico?_=${Date.now()}`;
-  });
-}
-
 export function SessionPanel({
   session,
   onApprove,
@@ -51,82 +25,33 @@ export function SessionPanel({
 }: SessionPanelProps) {
   const s = STUDIO_STRINGS.session;
   const p = STUDIO_STRINGS.preview;
-
-  // estimatedUrl comes from the server (computed from branch name + env vars)
-  const [estimatedUrl, setEstimatedUrl] = useState<string | null>(null);
-  // confirmedUrl is set once the client-side probe succeeds
-  const [confirmedUrl, setConfirmedUrl] = useState<string | null>(null);
+  const [preview, setPreview] = useState<PreviewStatus | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
-  const probeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Fetch estimated URL from server (no longer trying to confirm server-side)
-  const fetchEstimatedUrl = useCallback(async () => {
+  const fetchPreview = useCallback(async () => {
     if (!session?.id) return;
     try {
       const res = await fetch(`/api/studio/sessions/${session.id}/preview`);
-      if (!res.ok) return;
-      const data: PreviewStatus = await res.json();
-      // Accept server-confirmed url immediately
-      if (data.url) {
-        setConfirmedUrl(data.url);
-      }
-      if (data.estimatedUrl) {
-        setEstimatedUrl(data.estimatedUrl);
-      }
+      if (res.ok) setPreview(await res.json());
     } catch {
       // Ignore
     }
   }, [session?.id]);
 
-  // Start client-side probe loop once we have an estimatedUrl
-  const runProbe = useCallback(async () => {
-    if (!estimatedUrl || confirmedUrl) return;
-    const live = await probeDeployment(estimatedUrl);
-    if (live) {
-      setConfirmedUrl(estimatedUrl);
-      if (probeIntervalRef.current) {
-        clearInterval(probeIntervalRef.current);
-        probeIntervalRef.current = null;
-      }
-    }
-  }, [estimatedUrl, confirmedUrl]);
-
-  // Fetch estimatedUrl from server when branch is created
   useEffect(() => {
     if (!session?.branch || !session?.id) {
-      setEstimatedUrl(null);
-      setConfirmedUrl(null);
+      setPreview(null);
       return;
     }
-    fetchEstimatedUrl();
-  }, [session?.branch, session?.id, fetchEstimatedUrl]);
-
-  // Start / restart probe interval when estimatedUrl becomes available
-  useEffect(() => {
-    if (!estimatedUrl || confirmedUrl) {
-      if (probeIntervalRef.current) {
-        clearInterval(probeIntervalRef.current);
-        probeIntervalRef.current = null;
-      }
-      return;
-    }
-    // Run immediately, then every 8 seconds
-    runProbe();
-    probeIntervalRef.current = setInterval(runProbe, 8000);
-    return () => {
-      if (probeIntervalRef.current) {
-        clearInterval(probeIntervalRef.current);
-        probeIntervalRef.current = null;
-      }
-    };
-  }, [estimatedUrl, confirmedUrl, runProbe]);
+    fetchPreview();
+    const interval = setInterval(fetchPreview, 8000);
+    return () => clearInterval(interval);
+  }, [session?.branch, session?.id, fetchPreview]);
 
   async function handleCheckNow() {
-    if (!estimatedUrl) return;
     setIsChecking(true);
-    const live = await probeDeployment(estimatedUrl);
-    if (live) setConfirmedUrl(estimatedUrl);
+    await fetchPreview();
     setIsChecking(false);
   }
 
@@ -137,6 +62,9 @@ export function SessionPanel({
       </div>
     );
   }
+
+  const activeUrl = preview?.url;
+  const estimatedUrl = preview?.estimatedUrl;
 
   return (
     <div className="flex h-full flex-col">
@@ -167,26 +95,16 @@ export function SessionPanel({
 
         {/* Preview controls */}
         {estimatedUrl && (
-          <div className="mt-4 space-y-2">
-            {confirmedUrl ? (
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setShowPreview(!showPreview)}
-                  className="st-focus-ring text-xs text-(--st-accent) underline underline-offset-4 hover:text-(--st-accent-hover)"
-                >
-                  {showPreview ? p.hidePreview : p.showPreview}
-                </button>
-                <a
-                  href={confirmedUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="st-focus-ring text-xs text-(--st-text-muted) underline underline-offset-4 hover:text-(--st-text)"
-                >
-                  {p.openNewTab}
-                </a>
-              </div>
+          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            {activeUrl ? (
+              <button
+                onClick={() => setShowPreview(!showPreview)}
+                className="st-focus-ring text-xs text-(--st-accent) underline underline-offset-4 hover:text-(--st-accent-hover)"
+              >
+                {showPreview ? p.hidePreview : p.showPreview}
+              </button>
             ) : (
-              <div className="flex items-center gap-3">
+              <>
                 <span className="text-xs text-(--st-text-muted)">
                   {isChecking ? p.checking : p.estimatedWarning}
                 </span>
@@ -197,25 +115,24 @@ export function SessionPanel({
                 >
                   {p.checkNow}
                 </button>
-                {/* Always allow opening in new tab even while building */}
-                <a
-                  href={estimatedUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="st-focus-ring text-xs text-(--st-text-muted) underline underline-offset-4 hover:text-(--st-text)"
-                >
-                  {p.openNewTab}
-                </a>
-              </div>
+              </>
             )}
+            <a
+              href={activeUrl ?? estimatedUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="st-focus-ring text-xs text-(--st-text-muted) underline underline-offset-4 hover:text-(--st-text)"
+            >
+              {p.openNewTab}
+            </a>
           </div>
         )}
       </div>
 
-      {/* Preview iframe — only when deployment is confirmed ready */}
-      {showPreview && confirmedUrl && (
+      {/* Preview iframe — only when deployment URL is confirmed ready */}
+      {showPreview && activeUrl && (
         <div className="min-h-75 flex-1">
-          <PreviewFrame url={confirmedUrl} estimatedUrl={estimatedUrl} />
+          <PreviewFrame url={activeUrl} estimatedUrl={estimatedUrl ?? null} />
         </div>
       )}
 

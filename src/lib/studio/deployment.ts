@@ -49,13 +49,20 @@ export async function getDeploymentStatus(
 
 /**
  * Ping a URL to check if it responds successfully.
- * Uses GET + cache:no-store to bypass Next.js fetch caching.
+ * Passes Vercel's automation bypass header when the secret is configured,
+ * which allows checking protected preview deployments.
  */
 async function pingUrl(url: string): Promise<boolean> {
+  const env = getEnv();
+  const headers: Record<string, string> = {};
+  if (env.VERCEL_AUTOMATION_BYPASS_SECRET) {
+    headers["x-vercel-protection-bypass"] = env.VERCEL_AUTOMATION_BYPASS_SECRET;
+  }
   try {
     const res = await fetch(url, {
       method: "GET",
       cache: "no-store",
+      headers,
       signal: AbortSignal.timeout(8000),
     });
     return res.ok;
