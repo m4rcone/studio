@@ -48,8 +48,17 @@ export async function applyProposal(
     branch = generateBranchName();
     const mainSha = await github.getRef(env.GITHUB_DEFAULT_BRANCH);
     await github.createBranch(branch, mainSha);
+  }
 
-    // Create PR
+  // Commit changes before creating PR (GitHub rejects PRs with no commits ahead of base)
+  const sha = await provider.writeFiles(
+    fileChanges,
+    `studio: ${proposal.summary}`,
+    branch,
+  );
+
+  if (!prNumber) {
+    // Create PR after committing so the branch has at least one commit ahead of main
     const pr = await github.createPullRequest(
       `[Studio] ${session.title || proposal.summary}`,
       buildPRBody(session, proposal),
@@ -58,13 +67,6 @@ export async function applyProposal(
     prNumber = pr.number;
     prUrl = pr.url;
   }
-
-  // Commit changes
-  const sha = await provider.writeFiles(
-    fileChanges,
-    `studio: ${proposal.summary}`,
-    branch,
-  );
 
   return {
     sha: sha.sha,
