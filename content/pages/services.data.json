@@ -23,20 +23,8 @@
         "intro": "Every service is handled by the same lead architect from start to finish — ensuring creative continuity and a coherent final result. We do not outsource or fragment. Your project has one name and one face throughout.",
         "items": [
           {
-            "id": "svc-residential",
-            "number": "01",
-            "name": "Residential Architecture",
-            "description": "Full project development for houses and apartments, from feasibility study to detailed construction documents, with 3D visualization for approval before construction.",
-            "details": [
-              "Preliminary study",
-              "Design development",
-              "Construction documents",
-              "Project coordination"
-            ]
-          },
-          {
             "id": "svc-commercial",
-            "number": "02",
+            "number": "01",
             "name": "Commercial Architecture",
             "description": "Design for stores, restaurants, hotels, and retail spaces — focused on customer experience and brand identity, from floor plan to facade.",
             "details": [
@@ -44,6 +32,18 @@
               "Space planning",
               "Facade design",
               "Signage"
+            ]
+          },
+          {
+            "id": "svc-residential",
+            "number": "02",
+            "name": "Residential Architecture",
+            "description": "Full project development for houses and apartments, from feasibility study to detailed construction documents, with 3D visualization for approval before construction.",
+            "details": [
+              "Preliminary study",
+              "Design development",
+              "Construction documents",
+              "Project coordination"
             ]
           },
           {
