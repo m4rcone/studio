@@ -2,7 +2,7 @@
   "slug": "services",
   "meta": {
     "title": "Services",
-    "description": "Explore Atlas Architecture services: residential and commercial architecture, interior design, renovation, lighting consulting, and construction management."
+    "description": "Explore Atlas Architecture services: residential and commercial architecture, interior design, renovation, and lighting consulting."
   },
   "sections": [
     {
@@ -122,12 +122,6 @@
             "number": "05",
             "title": "Permits & Approvals",
             "description": "Processing with city hall and building management when required. Coordination with structural and MEP engineering."
-          },
-          {
-            "id": "step-06",
-            "number": "06",
-            "title": "Construction Management",
-            "description": "Periodic site visits to ensure faithful execution and resolve any unforeseen issues quickly and safely."
           }
         ]
       }
