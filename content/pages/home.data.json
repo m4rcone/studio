@@ -9,15 +9,15 @@
       "type": "hero",
       "id": "main-hero",
       "data": {
-        "headline": "We design spaces that tell your story",
-        "subheadline": "From concept to delivery, every project is developed with exclusive dedication — blending contemporary aesthetics with intelligent functionality.",
+        "headline": "Crafting architectural excellence that defines your legacy",
+        "subheadline": "We orchestrate bespoke environments where sophisticated design meets uncompromising functionality — creating spaces that transcend trends and embody timeless elegance.",
         "cta": {
-          "label": "Request a Quote",
+          "label": "Begin Your Vision",
           "href": "https://wa.me/5511987654321",
           "style": "whatsapp"
         },
         "secondaryCta": {
-          "label": "Explore our portfolio",
+          "label": "Discover Our Atelier",
           "href": "/portfolio"
         },
         "image": {
