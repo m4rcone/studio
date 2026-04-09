@@ -81,18 +81,6 @@
               "Lighting scenes",
               "Automation"
             ]
-          },
-          {
-            "id": "svc-management",
-            "number": "06",
-            "name": "Construction Management",
-            "description": "Periodic site supervision to ensure faithful execution of the design, quality control, and agile resolution of any on-site issues.",
-            "details": [
-              "Site visits",
-              "Progress reports",
-              "Contractor management",
-              "Phase approvals"
-            ]
           }
         ]
       }
