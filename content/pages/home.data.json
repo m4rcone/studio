@@ -9,10 +9,10 @@
       "type": "hero",
       "id": "main-hero",
       "data": {
-        "headline": "We design spaces that tell your story",
+        "headline": "TESTE",
         "subheadline": "From concept to delivery, every project is developed with exclusive dedication — blending contemporary aesthetics with intelligent functionality.",
         "cta": {
-          "label": "Request a Quote",
+          "label": "teste",
           "href": "https://wa.me/5511987654321",
           "style": "whatsapp"
         },
