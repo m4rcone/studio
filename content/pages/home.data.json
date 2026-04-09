@@ -51,6 +51,34 @@
       }
     },
     {
+      "type": "testimonials",
+      "id": "client-testimonials",
+      "data": {
+        "eyebrow": "Testimonials",
+        "headline": "What our clients say",
+        "items": [
+          {
+            "id": "testimonial-marina",
+            "quote": "Atlas transformed our home into something we didn't even know we wanted. The process was transparent from start to finish, and the delivery exceeded all our expectations. We recommend them without hesitation.",
+            "name": "Marina & Rodrigo Fonseca",
+            "description": "Residence — Alto de Pinheiros, São Paulo"
+          },
+          {
+            "id": "testimonial-carlos",
+            "quote": "We needed a studio that could convey innovation and professionalism at the same time. Atlas captured exactly that balance. The 3D visualization was key in getting us on board before construction.",
+            "name": "Carlos Andrade",
+            "description": "Corporate HQ — Itaim Bibi, São Paulo"
+          },
+          {
+            "id": "testimonial-paula",
+            "quote": "Our store turned out exactly as I imagined, but better. They brought solutions I never would have thought of. The deadline was met and the budget respected.",
+            "name": "Paula Silveira",
+            "description": "Boutique — Jardins, São Paulo"
+          }
+        ]
+      }
+    },
+    {
       "type": "portfolio-preview",
       "id": "featured-portfolio",
       "data": {
@@ -92,34 +120,6 @@
               "alt": "Sophisticated boutique interior on Oscar Freire"
             },
             "href": "/project-oscar-freire-boutique"
-          }
-        ]
-      }
-    },
-    {
-      "type": "testimonials",
-      "id": "client-testimonials",
-      "data": {
-        "eyebrow": "Testimonials",
-        "headline": "What our clients say",
-        "items": [
-          {
-            "id": "testimonial-marina",
-            "quote": "Atlas transformed our home into something we didn't even know we wanted. The process was transparent from start to finish, and the delivery exceeded all our expectations. We recommend them without hesitation.",
-            "name": "Marina & Rodrigo Fonseca",
-            "description": "Residence — Alto de Pinheiros, São Paulo"
-          },
-          {
-            "id": "testimonial-carlos",
-            "quote": "We needed a studio that could convey innovation and professionalism at the same time. Atlas captured exactly that balance. The 3D visualization was key in getting us on board before construction.",
-            "name": "Carlos Andrade",
-            "description": "Corporate HQ — Itaim Bibi, São Paulo"
-          },
-          {
-            "id": "testimonial-paula",
-            "quote": "Our store turned out exactly as I imagined, but better. They brought solutions I never would have thought of. The deadline was met and the budget respected.",
-            "name": "Paula Silveira",
-            "description": "Boutique — Jardins, São Paulo"
           }
         ]
       }
