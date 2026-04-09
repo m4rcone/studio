@@ -59,18 +59,6 @@
             ]
           },
           {
-            "id": "svc-renovation",
-            "number": "04",
-            "name": "Renovation & Retrofit",
-            "description": "Modernization of existing spaces with precise interventions that respect the structure and maximize results within the available budget.",
-            "details": [
-              "Technical diagnosis",
-              "Renovation design",
-              "Specifications",
-              "Cost estimation"
-            ]
-          },
-          {
             "id": "svc-lighting",
             "number": "05",
             "name": "Lighting Consulting",
