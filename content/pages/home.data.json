@@ -120,6 +120,12 @@
             "quote": "Our store turned out exactly as I imagined, but better. They brought solutions I never would have thought of. The deadline was met and the budget respected.",
             "name": "Paula Silveira",
             "description": "Boutique — Jardins, São Paulo"
+          },
+          {
+            "id": "testimonial-fernanda",
+            "quote": "O processo foi claro, organizado e o resultado ficou impecável.",
+            "name": "Fernanda Lima",
+            "description": "Apartamento — Bela Vista, Porto Alegre"
           }
         ]
       }
