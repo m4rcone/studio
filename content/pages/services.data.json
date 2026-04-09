@@ -60,7 +60,7 @@
           },
           {
             "id": "svc-lighting",
-            "number": "05",
+            "number": "04",
             "name": "Lighting Consulting",
             "description": "Lighting design that enhances the architecture, sets intentional atmospheres, and meets functional needs with energy efficiency.",
             "details": [
@@ -72,7 +72,7 @@
           },
           {
             "id": "svc-management",
-            "number": "06",
+            "number": "05",
             "name": "Construction Management",
             "description": "Periodic site supervision to ensure faithful execution of the design, quality control, and agile resolution of any on-site issues.",
             "details": [
