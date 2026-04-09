@@ -22,6 +22,7 @@ export async function createSession(
     prNumber: null,
     prUrl: null,
     previewUrl: null,
+    latestCommitSha: null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     title: "",
@@ -46,7 +47,12 @@ export async function getSession(
   const redis = getRedis();
   const data = await redis.get(sessionKey(sessionId));
   if (!data) return null;
-  return typeof data === "string" ? JSON.parse(data) : (data as StudioSession);
+  const session =
+    typeof data === "string" ? JSON.parse(data) : (data as StudioSession);
+  return {
+    ...session,
+    latestCommitSha: session.latestCommitSha ?? null,
+  };
 }
 
 /**

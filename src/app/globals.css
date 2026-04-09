@@ -16,6 +16,10 @@
     text-wrap: balance;
   }
 
+  p {
+    white-space: pre-line;
+  }
+
   body {
     font-family: var(--font-body), sans-serif;
   }

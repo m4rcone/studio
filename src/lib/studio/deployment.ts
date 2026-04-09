@@ -5,22 +5,39 @@ interface DeploymentStatus {
   status: "building" | "ready" | "error" | "unknown";
   url: string | null;
   estimatedUrl: string | null;
+  bypassConfigured: boolean;
+  deploymentSha?: string | null;
+  expectedSha?: string | null;
 }
 
 /**
  * Get the current deployment status for a branch.
- * Tries GitHub Deployments API first, falls back to pinging the estimated URL.
+ * Tries GitHub Deployments API first, falls back to pinging the estimated URL
+ * only when we do not need to verify a specific commit SHA.
  * All URLs returned to the client include the Vercel bypass query param when configured.
  */
 export async function getDeploymentStatus(
   branch: string,
+  expectedSha?: string | null,
 ): Promise<DeploymentStatus> {
+  const bypassConfigured = hasAutomationBypass();
   const estimatedUrl = buildEstimatedUrl(branch);
   const estimatedUrlForClient = withBypass(estimatedUrl);
 
   try {
     const deployment = await github.getLatestDeployment(branch);
     if (deployment) {
+      if (expectedSha && deployment.sha && deployment.sha !== expectedSha) {
+        return {
+          status: "building",
+          url: null,
+          estimatedUrl: estimatedUrlForClient,
+          bypassConfigured,
+          deploymentSha: deployment.sha,
+          expectedSha,
+        };
+      }
+
       const status = await github.getDeploymentStatus(deployment.id);
       if (status) {
         if (status.state === "success") {
@@ -28,6 +45,9 @@ export async function getDeploymentStatus(
             status: "ready",
             url: withBypass(status.url || estimatedUrl),
             estimatedUrl: estimatedUrlForClient,
+            bypassConfigured,
+            deploymentSha: deployment.sha,
+            expectedSha: expectedSha ?? null,
           };
         }
         if (status.state === "failure" || status.state === "error") {
@@ -35,13 +55,42 @@ export async function getDeploymentStatus(
             status: "error",
             url: null,
             estimatedUrl: estimatedUrlForClient,
+            bypassConfigured,
+            deploymentSha: deployment.sha,
+            expectedSha: expectedSha ?? null,
           };
         }
-        // Not confirmed yet — fall through to URL ping as secondary check
       }
+
+      return {
+        status: "building",
+        url: null,
+        estimatedUrl: estimatedUrlForClient,
+        bypassConfigured,
+        deploymentSha: deployment.sha,
+        expectedSha: expectedSha ?? null,
+      };
     }
   } catch {
-    // GitHub API unavailable — fall through to URL ping
+    if (expectedSha) {
+      return {
+        status: "building",
+        url: null,
+        estimatedUrl: estimatedUrlForClient,
+        bypassConfigured,
+        expectedSha,
+      };
+    }
+  }
+
+  if (expectedSha) {
+    return {
+      status: "building",
+      url: null,
+      estimatedUrl: estimatedUrlForClient,
+      bypassConfigured,
+      expectedSha,
+    };
   }
 
   // Fallback: ping the estimated URL directly (using header bypass, not query param)
@@ -51,15 +100,23 @@ export async function getDeploymentStatus(
       status: "ready",
       url: estimatedUrlForClient,
       estimatedUrl: estimatedUrlForClient,
+      bypassConfigured,
     };
   }
 
-  return { status: "building", url: null, estimatedUrl: estimatedUrlForClient };
+  return {
+    status: "building",
+    url: null,
+    estimatedUrl: estimatedUrlForClient,
+    bypassConfigured,
+  };
 }
 
 /**
- * Append the Vercel automation bypass query parameter to a URL.
- * This allows browser clients (links, iframes) to access protected preview deployments.
+ * Append Vercel's automation bypass parameters to a URL.
+ * For direct browser navigation we use `x-vercel-set-bypass-cookie=true`,
+ * which is the documented default for setting the bypass cookie on follow-up
+ * requests. `samesitenone` is only needed for embedded/non-direct contexts.
  */
 function withBypass(url: string): string {
   const env = getEnv();
@@ -70,14 +127,14 @@ function withBypass(url: string): string {
       "x-vercel-protection-bypass",
       env.VERCEL_AUTOMATION_BYPASS_SECRET,
     );
-    previewUrl.searchParams.set("x-vercel-set-bypass-cookie", "samesitenone");
+    previewUrl.searchParams.set("x-vercel-set-bypass-cookie", "true");
     return previewUrl.toString();
   } catch {
     const separator = url.includes("?") ? "&" : "?";
     const bypassParam = `x-vercel-protection-bypass=${encodeURIComponent(
       env.VERCEL_AUTOMATION_BYPASS_SECRET,
     )}`;
-    const cookieParam = "x-vercel-set-bypass-cookie=samesitenone";
+    const cookieParam = "x-vercel-set-bypass-cookie=true";
     const hasBypass = url.includes("x-vercel-protection-bypass=");
     const hasCookie = url.includes("x-vercel-set-bypass-cookie=");
 
@@ -86,6 +143,10 @@ function withBypass(url: string): string {
     if (hasCookie) return `${url}${separator}${bypassParam}`;
     return `${url}${separator}${bypassParam}&${cookieParam}`;
   }
+}
+
+function hasAutomationBypass(): boolean {
+  return Boolean(getEnv().VERCEL_AUTOMATION_BYPASS_SECRET);
 }
 
 /**

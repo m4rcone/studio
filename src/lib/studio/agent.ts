@@ -19,7 +19,7 @@ export async function* runAgent(
 ): AsyncGenerator<StreamEvent> {
   const env = getEnv();
   const anthropic = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
-  const systemPrompt = await buildSystemPrompt(session);
+  const systemPrompt = await buildSystemPrompt(session, userMessage);
 
   const messages: AnthropicMessage[] = [
     ...chatHistory,
@@ -27,6 +27,7 @@ export async function* runAgent(
   ];
 
   let iterations = 0;
+  let proposalFailures = 0;
   const startTime = Date.now();
 
   while (true) {
@@ -91,11 +92,38 @@ export async function* runAgent(
           content: result,
         });
 
+        try {
+          const parsed = JSON.parse(result) as { error?: string };
+          if (typeof parsed.error === "string" && parsed.error.length > 0) {
+            if (toolUse.name === "propose_changes") {
+              proposalFailures += 1;
+            }
+
+            yield {
+              type: "error",
+              message: `${toolUse.name}: ${parsed.error}`,
+            };
+
+            if (toolUse.name === "propose_changes" && proposalFailures >= 2) {
+              yield {
+                type: "error",
+                message:
+                  "Stopping after repeated proposal errors. Explain the constraint or ask the user to refine the request instead of retrying again.",
+              };
+              yield { type: "done" };
+              return;
+            }
+          }
+        } catch {
+          // Ignore non-JSON tool output
+        }
+
         // Check if this was a propose_changes call
         if (toolUse.name === "propose_changes") {
           try {
             const parsed = JSON.parse(result);
             if (parsed.proposalId) {
+              proposalFailures = 0;
               yield {
                 type: "proposal_created",
                 proposalId: parsed.proposalId,

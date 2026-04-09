@@ -3,6 +3,7 @@ import { getSession } from "@/lib/studio/session-store";
 import { appendMessage, getMessages } from "@/lib/studio/session-store";
 import { acquireLock, releaseLock } from "@/lib/studio/store";
 import { runAgent } from "@/lib/studio/agent";
+import { rejectPendingProposal } from "@/lib/studio/proposal";
 import type { ChatMessage } from "@/lib/studio/types";
 
 interface RouteParams {
@@ -57,6 +58,9 @@ export async function POST(request: Request, { params }: RouteParams) {
       timestamp: new Date().toISOString(),
     };
     await appendMessage(sessionId, userMsg);
+
+    // A new user turn supersedes any previous pending proposal in this session.
+    await rejectPendingProposal(sessionId);
 
     // Get chat history for context
     const history = await getMessages(sessionId);

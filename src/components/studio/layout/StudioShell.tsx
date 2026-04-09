@@ -1,22 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { StudioHeader } from "./StudioHeader";
-import { StatusPill } from "./StatusPill";
 import { useAuth } from "@/hooks/studio/useAuth";
 import { useSession } from "@/hooks/studio/useSession";
 import { useChat, clearChatHistory } from "@/hooks/studio/useChat";
 import { ChatPanel } from "../chat/ChatPanel";
 import { SessionPanel } from "../session/SessionPanel";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
-import { STUDIO_STRINGS } from "@/lib/studio/constants";
 
+type ConfirmAction = "publish" | "discard" | "new-chat" | null;
 type MobileTab = "chat" | "session";
 
 export function StudioShell() {
   const { user, loading: authLoading, logout } = useAuth();
   const {
     session,
+    loading: sessionLoading,
     error: sessionError,
     restoreOrCreateSession,
     refreshSession,
@@ -24,66 +24,82 @@ export function StudioShell() {
     discardSession,
     startNewSession,
   } = useSession();
-  const { messages, isStreaming, error, sendMessage } = useChat(
-    session?.id ?? null,
-  );
+  const {
+    messages,
+    isStreaming,
+    error,
+    sendMessage,
+    applyProposal,
+    rejectProposal,
+  } = useChat(session?.id ?? null);
+  const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
+  const [pendingAction, setPendingAction] = useState<ConfirmAction>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [previewRefreshNonce, setPreviewRefreshNonce] = useState(0);
+  const [previewPending, setPreviewPending] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileTab>("chat");
-  const [confirmAction, setConfirmAction] = useState<
-    "publish" | "discard" | "new-chat" | null
-  >(null);
-
-  const s = STUDIO_STRINGS.session;
 
   useEffect(() => {
-    if (user && !session) {
-      restoreOrCreateSession();
+    if (user && !session && !sessionLoading && !sessionError) {
+      void restoreOrCreateSession();
     }
-  }, [user, session, restoreOrCreateSession]);
+  }, [user, session, sessionLoading, sessionError, restoreOrCreateSession]);
 
   useEffect(() => {
     if (!isStreaming && session?.id) {
-      refreshSession(session.id);
+      void refreshSession(session.id);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isStreaming]);
+  }, [isStreaming, session?.id, refreshSession]);
 
-  const statusVariant = session
-    ? session.status === "active"
-      ? ("active" as const)
-      : session.status === "approved"
-        ? ("approved" as const)
-        : ("discarded" as const)
-    : ("active" as const);
-
-  const statusLabel = session
-    ? session.status === "active"
-      ? s.statusActive
-      : session.status === "approved"
-        ? s.statusApproved
-        : s.statusDiscarded
-    : undefined;
+  const isBootstrappingSession = Boolean(
+    user && sessionLoading && !session && !sessionError,
+  );
 
   async function handleConfirm() {
-    if (confirmAction === "publish") {
-      await approveSession();
-    } else if (confirmAction === "discard") {
-      if (session) clearChatHistory(session.id);
-      await discardSession();
-    } else if (confirmAction === "new-chat") {
-      const oldId = await startNewSession();
-      if (oldId) clearChatHistory(oldId);
+    if (!confirmAction || pendingAction) return;
+
+    setActionError(null);
+    setPendingAction(confirmAction);
+
+    try {
+      if (confirmAction === "publish") {
+        await approveSession();
+      } else if (confirmAction === "discard") {
+        if (session) clearChatHistory(session.id);
+        await discardSession();
+      } else if (confirmAction === "new-chat") {
+        const oldId = await startNewSession();
+        if (oldId) clearChatHistory(oldId);
+      }
+
+      setConfirmAction(null);
+    } catch {
+      setActionError("Could not complete that action. Try again.");
+    } finally {
+      setPendingAction(null);
     }
-    setConfirmAction(null);
   }
+
+  const handleProposalApplied = useCallback(() => {
+    if (!session?.id) return;
+    setPreviewPending(true);
+    setPreviewRefreshNonce((current) => current + 1);
+    void refreshSession(session.id);
+  }, [session?.id, refreshSession]);
+
+  const handlePreviewSettled = useCallback(() => {
+    setPreviewPending(false);
+  }, []);
 
   if (authLoading) {
     return (
-      <div className="studio flex h-screen items-center justify-center">
+      <div className="studio flex min-h-screen items-center justify-center px-4">
         <div
-          className="flex items-center gap-2 text-sm text-(--st-text-muted)"
+          className="st-panel flex items-center gap-3 px-5 py-4 text-sm text-(--st-text-muted)"
           role="status"
         >
           <svg
+            aria-hidden="true"
             className="h-4 w-4 animate-spin text-(--st-accent)"
             viewBox="0 0 24 24"
             fill="none"
@@ -104,136 +120,151 @@ export function StudioShell() {
               className="opacity-75"
             />
           </svg>
-          {STUDIO_STRINGS.preview.loading}
+          Loading…
         </div>
       </div>
     );
   }
 
   return (
-    <div className="studio flex h-screen flex-col">
-      {sessionError && (
-        <div className="flex items-center gap-2 border-b border-(--st-danger-muted) bg-(--st-danger-muted) px-4 py-2">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="shrink-0 text-(--st-danger)"
+    <div className="studio flex h-[100dvh] min-h-[100dvh] flex-col overflow-hidden">
+      <a
+        href="#studio-main"
+        className="st-focus-ring sr-only absolute top-4 left-4 z-20 rounded-(--st-radius-full) bg-(--st-bg-surface) px-4 py-2 text-sm text-(--st-text) shadow-(--st-shadow-sm) focus:not-sr-only"
+      >
+        Skip to Content
+      </a>
+
+      <StudioHeader userName={user?.sub ?? null} onLogout={logout} />
+
+      <main
+        id="studio-main"
+        className="mx-auto flex min-h-0 w-full max-w-[1200px] flex-1 flex-col overflow-hidden px-4 py-4 sm:px-6 sm:py-6"
+      >
+        {sessionError ? (
+          <div className="mb-4 rounded-(--st-radius) border border-(--st-danger-border) bg-(--st-danger-muted) px-4 py-3">
+            <p className="text-sm text-(--st-danger)" role="alert">
+              {sessionError}
+            </p>
+          </div>
+        ) : null}
+
+        {actionError ? (
+          <div className="mb-4 rounded-(--st-radius) border border-(--st-danger-border) bg-(--st-danger-muted) px-4 py-3">
+            <p className="text-sm text-(--st-danger)" role="alert">
+              {actionError}
+            </p>
+          </div>
+        ) : null}
+
+        <div className="mb-4 lg:hidden">
+          <div className="grid grid-cols-2 gap-2 rounded-(--st-radius) border border-(--st-border-subtle) bg-(--st-bg-subtle) p-1">
+            <button
+              type="button"
+              onClick={() => setMobileTab("chat")}
+              aria-pressed={mobileTab === "chat"}
+              className={`st-focus-ring rounded-[10px] px-4 py-2.5 text-sm font-medium transition-colors ${
+                mobileTab === "chat"
+                  ? "bg-(--st-bg-surface) text-(--st-text) shadow-(--st-shadow-sm)"
+                  : "text-(--st-text-muted)"
+              }`}
+            >
+              Chat
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileTab("session")}
+              aria-pressed={mobileTab === "session"}
+              className={`st-focus-ring rounded-[10px] px-4 py-2.5 text-sm font-medium transition-colors ${
+                mobileTab === "session"
+                  ? "bg-(--st-bg-surface) text-(--st-text) shadow-(--st-shadow-sm)"
+                  : "text-(--st-text-muted)"
+              }`}
+            >
+              Session
+              {session?.commitCount ? (
+                <span className="ml-2 text-xs text-(--st-text-muted)">
+                  {session.commitCount}
+                </span>
+              ) : null}
+            </button>
+          </div>
+        </div>
+
+        <div className="grid min-h-0 flex-1 gap-5 lg:grid-cols-[minmax(0,1fr)_292px] lg:overflow-hidden">
+          <div
+            className={`min-h-0 ${mobileTab === "session" ? "hidden lg:block" : ""}`}
           >
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <p className="text-xs text-(--st-danger)">{sessionError}</p>
-          <button
-            onClick={() => restoreOrCreateSession()}
-            className="st-focus-ring ml-auto text-xs text-(--st-danger) underline underline-offset-2 hover:opacity-80"
+            <ChatPanel
+              messages={messages}
+              isStreaming={isStreaming}
+              error={error}
+              sessionId={session?.id ?? null}
+              onSend={sendMessage}
+              onApplyProposal={applyProposal}
+              onRejectProposal={rejectProposal}
+              onProposalApplied={
+                session?.id ? handleProposalApplied : undefined
+              }
+              onNewChat={() => setConfirmAction("new-chat")}
+              newChatLoading={pendingAction === "new-chat"}
+              newChatDisabled={
+                isStreaming || Boolean(pendingAction) || !session?.id
+              }
+              sessionStatus={session?.status}
+            />
+          </div>
+
+          <div
+            className={`min-h-0 ${mobileTab === "chat" ? "hidden lg:block" : ""}`}
           >
-            Retry
-          </button>
+            <SessionPanel
+              session={session}
+              loading={isBootstrappingSession}
+              previewRefreshNonce={previewRefreshNonce}
+              previewPending={previewPending}
+              onPreviewSettled={handlePreviewSettled}
+              pendingAction={
+                pendingAction === "publish" || pendingAction === "discard"
+                  ? pendingAction
+                  : null
+              }
+              onApprove={() => setConfirmAction("publish")}
+              onDiscard={() => setConfirmAction("discard")}
+            />
+          </div>
         </div>
-      )}
-      <StudioHeader
-        userName={user?.sub ?? null}
-        sessionStatus={statusLabel}
-        statusVariant={statusVariant}
-        onNewChat={() => setConfirmAction("new-chat")}
-        onLogout={logout}
-      />
+      </main>
 
-      {/* Mobile tab bar */}
-      <div className="flex border-b border-(--st-border) lg:hidden">
-        <button
-          onClick={() => setMobileTab("chat")}
-          className={`st-focus-ring flex-1 py-2.5 text-center text-xs font-medium tracking-wider uppercase transition-colors ${
-            mobileTab === "chat"
-              ? "border-b-2 border-(--st-accent) text-(--st-text)"
-              : "text-(--st-text-muted) hover:text-(--st-text-secondary)"
-          }`}
-        >
-          Chat
-        </button>
-        <button
-          onClick={() => setMobileTab("session")}
-          className={`st-focus-ring flex-1 py-2.5 text-center text-xs font-medium tracking-wider uppercase transition-colors ${
-            mobileTab === "session"
-              ? "border-b-2 border-(--st-accent) text-(--st-text)"
-              : "text-(--st-text-muted) hover:text-(--st-text-secondary)"
-          }`}
-        >
-          {s.previewLabel}
-          {session?.commitCount ? (
-            <span className="ml-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-(--st-accent) px-1 text-[10px] text-(--st-accent-text)">
-              {session.commitCount}
-            </span>
-          ) : null}
-        </button>
-      </div>
-
-      {/* Mobile floating status */}
-      {session && statusLabel && (
-        <div className="absolute top-14 right-4 z-10 lg:hidden">
-          <StatusPill label={statusLabel} variant={statusVariant} />
-        </div>
-      )}
-
-      <div className="flex min-h-0 flex-1">
-        {/* Chat panel */}
-        <div
-          className={`flex min-h-0 flex-1 flex-col lg:w-3/5 ${mobileTab !== "chat" ? "hidden lg:flex" : ""}`}
-        >
-          <ChatPanel
-            messages={messages}
-            isStreaming={isStreaming}
-            error={error}
-            sessionId={session?.id ?? null}
-            onSend={sendMessage}
-            onProposalApplied={session?.id ? () => refreshSession(session.id!) : undefined}
-          />
-        </div>
-
-        {/* Session panel */}
-        <div
-          className={`min-h-0 flex-1 overflow-y-auto border-l border-(--st-border) lg:block lg:w-2/5 ${mobileTab !== "session" ? "hidden lg:block" : ""}`}
-        >
-          <SessionPanel
-            session={session}
-            onApprove={() => setConfirmAction("publish")}
-            onDiscard={() => setConfirmAction("discard")}
-          />
-        </div>
-      </div>
-
-      {/* Confirm dialogs */}
       <ConfirmDialog
         open={confirmAction === "publish"}
-        title={s.publishButton}
-        description={s.publishConfirm}
-        confirmLabel={s.publishButton}
-        onConfirm={handleConfirm}
+        title="Publish Changes?"
+        description="This will send the reviewed changes live."
+        confirmLabel="Publish"
+        onConfirm={() => void handleConfirm()}
         onCancel={() => setConfirmAction(null)}
+        loading={pendingAction === "publish"}
       />
+
       <ConfirmDialog
         open={confirmAction === "discard"}
-        title={s.discardButton}
-        description={s.discardConfirm}
-        confirmLabel={s.discardButton}
-        onConfirm={handleConfirm}
+        title="Discard This Draft?"
+        description="This will close the current draft and clear this chat from the browser."
+        confirmLabel="Discard"
+        onConfirm={() => void handleConfirm()}
         onCancel={() => setConfirmAction(null)}
         variant="danger"
+        loading={pendingAction === "discard"}
       />
+
       <ConfirmDialog
         open={confirmAction === "new-chat"}
-        title={s.newChatButton}
-        description={s.newChatConfirm}
-        confirmLabel={s.newChatButton}
-        onConfirm={handleConfirm}
+        title="Start a New Chat?"
+        description="The current chat history will no longer appear here."
+        confirmLabel="Start New Chat"
+        onConfirm={() => void handleConfirm()}
         onCancel={() => setConfirmAction(null)}
+        loading={pendingAction === "new-chat"}
       />
     </div>
   );

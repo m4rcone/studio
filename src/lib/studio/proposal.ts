@@ -16,6 +16,7 @@ export async function createProposal(
   role: "client" | "team",
   summary: string,
   operations: ContentOperation[],
+  branch?: string | null,
 ): Promise<PendingProposal> {
   const provider = await getContentProvider();
   const diffs: FileDiff[] = [];
@@ -28,7 +29,7 @@ export async function createProposal(
 
     // 2. Read current file content
     const filePath = normalizeContentPath(op.file);
-    const content = await provider.readFile(filePath);
+    const content = await provider.readFile(filePath, branch ?? undefined);
     const data = JSON.parse(content);
 
     // 3. Resolve path and capture "before" value
@@ -106,6 +107,27 @@ export async function updateProposalStatus(
   await redis.set(proposalKey(sessionId), JSON.stringify(proposal), {
     ex: PROPOSAL_TTL,
   });
+}
+
+/**
+ * Reject the current pending proposal for a session, if one exists.
+ * Returns the rejected proposal or null when there is no pending proposal.
+ */
+export async function rejectPendingProposal(
+  sessionId: string,
+): Promise<PendingProposal | null> {
+  const proposal = await getProposal(sessionId);
+  if (!proposal || proposal.status !== "pending") {
+    return null;
+  }
+
+  proposal.status = "rejected";
+  const redis = getRedis();
+  await redis.set(proposalKey(sessionId), JSON.stringify(proposal), {
+    ex: PROPOSAL_TTL,
+  });
+
+  return proposal;
 }
 
 function normalizeContentPath(file: string): string {

@@ -40,6 +40,12 @@ export function assertOperationAllowed(
     throw new PermissionError("Path traversal is not allowed");
   }
 
+  if (op.op === "update_field" && isStructuredValue(op.value)) {
+    throw new PermissionError(
+      "update_field must target a single text/number/boolean/null field. Use insert_item, remove_item, reorder, or multiple field-level update_field operations for arrays and objects.",
+    );
+  }
+
   // 3. Client-specific restrictions
   if (role === "client") {
     // Clients cannot create new files (new pages)
@@ -71,6 +77,10 @@ function isNewFilePath(path: string): boolean {
   // Very basic heuristic — creating a new file would mean the path
   // doesn't resolve to an existing field
   return path === "" || path === "/";
+}
+
+function isStructuredValue(value: unknown): boolean {
+  return typeof value === "object" && value !== null;
 }
 
 export class PermissionError extends Error {

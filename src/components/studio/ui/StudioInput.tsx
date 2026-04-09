@@ -10,11 +10,11 @@ interface StudioInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export const StudioInput = forwardRef<HTMLInputElement, StudioInputProps>(
   function StudioInput({ label, error, id, className = "", ...props }, ref) {
     return (
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         {label && (
           <label
             htmlFor={id}
-            className="text-[11px] font-medium tracking-wider text-(--st-text-secondary) uppercase"
+            className="text-[11px] font-semibold tracking-[0.18em] text-(--st-text-muted) uppercase"
           >
             {label}
           </label>
@@ -22,7 +22,7 @@ export const StudioInput = forwardRef<HTMLInputElement, StudioInputProps>(
         <input
           ref={ref}
           id={id}
-          className={`st-focus-ring rounded-(--st-radius-sm) border border-(--st-border) bg-(--st-bg-input) px-3.5 py-2.5 text-sm text-(--st-text) transition-colors placeholder:text-(--st-text-muted) ${error ? "border-(--st-danger)" : "focus:border-(--st-accent)"} ${className}`}
+          className={`st-focus-ring rounded-(--st-radius) border border-(--st-border) bg-(--st-bg-input) px-4 py-3 text-sm text-(--st-text) shadow-[inset_0_1px_0_rgb(255_255_255_/_0.7)] transition-[border-color,box-shadow,background-color] placeholder:text-(--st-text-muted) ${error ? "border-(--st-danger)" : "focus:border-(--st-border-strong) focus:bg-white focus:shadow-[0_0_0_4px_var(--st-focus-soft)]"} ${className}`}
           {...props}
         />
         {error && (

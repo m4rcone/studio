@@ -106,7 +106,11 @@ function parsePath(path: string): PathSegment[] {
         // Numeric index: items[3]
         const idx = parseInt(bracket, 10);
         if (!isNaN(idx)) {
-          segments.push({ type: "arrayIndex", arrayField: fieldName, index: idx });
+          segments.push({
+            type: "arrayIndex",
+            arrayField: fieldName,
+            index: idx,
+          });
         }
       } else {
         // Key=value selector: sections[id=main-hero]

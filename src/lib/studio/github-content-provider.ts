@@ -20,8 +20,8 @@ export class GitHubContentProvider implements ContentProvider {
     return { sha };
   }
 
-  async listFiles(directory: string): Promise<string[]> {
-    return github.listFiles(directory);
+  async listFiles(directory: string, branch?: string): Promise<string[]> {
+    return github.listFiles(directory, branch);
   }
 
   async readTextFile(path: string): Promise<string> {

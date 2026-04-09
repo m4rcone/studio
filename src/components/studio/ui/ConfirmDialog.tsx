@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { StudioButton } from "./StudioButton";
-import { STUDIO_STRINGS } from "@/lib/studio/constants";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -13,6 +12,7 @@ interface ConfirmDialogProps {
   onConfirm: () => void;
   onCancel: () => void;
   variant?: "default" | "danger";
+  loading?: boolean;
 }
 
 export function ConfirmDialog({
@@ -20,10 +20,11 @@ export function ConfirmDialog({
   title,
   description,
   confirmLabel,
-  cancelLabel = STUDIO_STRINGS.session.cancelButton,
+  cancelLabel = "Cancel",
   onConfirm,
   onCancel,
   variant = "default",
+  loading = false,
 }: ConfirmDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const confirmRef = useRef<HTMLButtonElement>(null);
@@ -56,17 +57,27 @@ export function ConfirmDialog({
   return (
     <dialog
       ref={dialogRef}
-      className="fixed inset-0 m-auto w-full max-w-sm overscroll-contain rounded-(--st-radius-lg) border border-(--st-border) bg-(--st-bg-elevated) p-0 shadow-(--st-shadow-lg)"
+      aria-labelledby="studio-confirm-title"
+      className="fixed inset-0 m-auto w-full max-w-sm overscroll-contain rounded-(--st-radius-lg) border border-(--st-border) bg-(--st-bg-surface) p-0 shadow-(--st-shadow-lg)"
     >
       <div className="p-6">
-        <h2 className="mb-1.5 text-base font-semibold text-(--st-text)">
+        <h2
+          id="studio-confirm-title"
+          className="text-lg font-semibold text-(--st-text)"
+        >
           {title}
         </h2>
-        <p className="mb-6 text-sm leading-relaxed text-(--st-text-secondary)">
+        <p className="mt-2 text-sm leading-relaxed text-(--st-text-secondary)">
           {description}
         </p>
-        <div className="flex justify-end gap-2.5">
-          <StudioButton variant="secondary" size="sm" onClick={onCancel}>
+
+        <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <StudioButton
+            variant="secondary"
+            size="sm"
+            onClick={onCancel}
+            disabled={loading}
+          >
             {cancelLabel}
           </StudioButton>
           <StudioButton
@@ -74,6 +85,7 @@ export function ConfirmDialog({
             variant={variant === "danger" ? "danger" : "primary"}
             size="sm"
             onClick={onConfirm}
+            loading={loading}
           >
             {confirmLabel}
           </StudioButton>

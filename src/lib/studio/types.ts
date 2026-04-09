@@ -7,6 +7,7 @@ export interface StudioSession {
   prNumber: number | null;
   prUrl: string | null;
   previewUrl: string | null;
+  latestCommitSha?: string | null;
   createdAt: string;
   updatedAt: string;
   title: string;

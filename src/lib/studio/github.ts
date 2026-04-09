@@ -46,7 +46,7 @@ export async function readFile(
 ): Promise<{ content: string; sha: string }> {
   const ref = branch ?? getEnv().GITHUB_DEFAULT_BRANCH;
   const data = await githubFetch<GitHubFileContent>(
-    `/contents/${path}?ref=${ref}`,
+    `/contents/${path}?ref=${encodeURIComponent(ref)}`,
   );
   const content = Buffer.from(data.content, "base64").toString("utf-8");
   return { content, sha: data.sha };
@@ -64,7 +64,7 @@ export async function listFiles(
 ): Promise<string[]> {
   const ref = branch ?? getEnv().GITHUB_DEFAULT_BRANCH;
   const entries = await githubFetch<GitHubDirEntry[]>(
-    `/contents/${directory}?ref=${ref}`,
+    `/contents/${directory}?ref=${encodeURIComponent(ref)}`,
   );
   return entries.filter((e) => e.type === "file").map((e) => e.path);
 }
@@ -201,6 +201,7 @@ export async function closePullRequest(prNumber: number): Promise<void> {
 interface GitHubDeployment {
   id: number;
   environment: string;
+  sha?: string | null;
 }
 
 interface GitHubDeploymentStatus {
@@ -210,11 +211,13 @@ interface GitHubDeploymentStatus {
 
 export async function getLatestDeployment(
   branch: string,
-): Promise<{ id: number } | null> {
+): Promise<{ id: number; sha: string | null } | null> {
   const deployments = await githubFetch<GitHubDeployment[]>(
-    `/deployments?ref=${branch}&per_page=1`,
+    `/deployments?ref=${encodeURIComponent(branch)}&per_page=1`,
   );
-  return deployments.length > 0 ? { id: deployments[0].id } : null;
+  return deployments.length > 0
+    ? { id: deployments[0].id, sha: deployments[0].sha ?? null }
+    : null;
 }
 
 export async function getDeploymentStatus(

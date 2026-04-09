@@ -12,6 +12,7 @@ export async function applyProposal(
   session: StudioSession,
 ): Promise<{ sha: string; branch: string; prNumber: number; prUrl: string }> {
   const provider = await getContentProvider();
+  const sourceBranch = session.branch ?? undefined;
 
   // Group operations by file
   const fileOps = new Map<string, typeof proposal.operations>();
@@ -25,7 +26,7 @@ export async function applyProposal(
   // Apply operations to each file
   const fileChanges: Array<{ path: string; content: string }> = [];
   for (const [filePath, ops] of fileOps) {
-    const content = await provider.readFile(filePath);
+    const content = await provider.readFile(filePath, sourceBranch);
     let data = JSON.parse(content);
 
     for (const op of ops) {

@@ -9,6 +9,7 @@ export function useStreamingResponse() {
   const stream = useCallback(async function* (
     url: string,
     body: Record<string, unknown>,
+    options?: { onOpen?: () => void },
   ): AsyncGenerator<StreamEvent> {
     abortRef.current?.abort();
     const controller = new AbortController();
@@ -26,6 +27,8 @@ export function useStreamingResponse() {
       yield { type: "error", message: err.error || `Error ${res.status}` };
       return;
     }
+
+    options?.onOpen?.();
 
     const reader = res.body?.getReader();
     if (!reader) {

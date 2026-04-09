@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { STUDIO_STRINGS } from "@/lib/studio/constants";
 import { StudioInput } from "../ui/StudioInput";
 import { StudioButton } from "../ui/StudioButton";
 
@@ -12,8 +11,6 @@ export function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const s = STUDIO_STRINGS.auth;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,14 +25,14 @@ export function LoginForm() {
       });
 
       if (!res.ok) {
-        setError(s.loginError);
+        setError("Please check your email and password.");
         return;
       }
 
       router.push("/studio");
       router.refresh();
     } catch {
-      setError(STUDIO_STRINGS.errors.network);
+      setError("Connection error. Try again in a moment.");
     } finally {
       setLoading(false);
     }
@@ -46,13 +43,15 @@ export function LoginForm() {
       <StudioInput
         id="username"
         name="username"
-        type="text"
+        type="email"
         autoComplete="username"
         required
-        label={s.usernameLabel}
+        label="Email"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        placeholder={s.usernamePlaceholder}
+        placeholder="you@email.com"
+        disabled={loading}
+        spellCheck={false}
       />
 
       <StudioInput
@@ -61,17 +60,18 @@ export function LoginForm() {
         type="password"
         autoComplete="current-password"
         required
-        label={s.passwordLabel}
+        label="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        placeholder={s.passwordPlaceholder}
+        placeholder="********"
+        disabled={loading}
       />
 
-      {error && (
+      {error ? (
         <p className="text-sm text-(--st-danger)" role="alert">
           {error}
         </p>
-      )}
+      ) : null}
 
       <StudioButton
         type="submit"
@@ -79,7 +79,7 @@ export function LoginForm() {
         size="lg"
         className="w-full"
       >
-        {s.loginButton}
+        {loading ? "Signing In…" : "Sign In"}
       </StudioButton>
     </form>
   );

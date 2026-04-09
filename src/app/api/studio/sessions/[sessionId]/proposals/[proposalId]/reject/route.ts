@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/studio/auth";
-import { getSession, updateSession } from "@/lib/studio/session-store";
+import { getSession } from "@/lib/studio/session-store";
 import { getProposal, updateProposalStatus } from "@/lib/studio/proposal";
-import { applyProposal } from "@/lib/studio/apply";
 import { acquireLock, releaseLock } from "@/lib/studio/store";
 
 interface RouteParams {
@@ -26,7 +25,6 @@ export async function POST(_request: Request, { params }: RouteParams) {
       );
     }
 
-    // Acquire lock
     const locked = await acquireLock(sessionId);
     if (!locked) {
       return NextResponse.json(
@@ -52,32 +50,9 @@ export async function POST(_request: Request, { params }: RouteParams) {
         );
       }
 
-      // Apply the proposal
-      const result = await applyProposal(proposal, session);
+      await updateProposalStatus(sessionId, "rejected");
 
-      // Update session
-      session.branch = result.branch;
-      session.prNumber = result.prNumber;
-      session.prUrl = result.prUrl;
-      session.latestCommitSha = result.sha;
-      session.commitCount += 1;
-      session.changedFiles = Array.from(
-        new Set([...session.changedFiles, ...proposal.affectedFiles]),
-      );
-      if (!session.title) {
-        session.title = proposal.summary;
-      }
-      await updateSession(session);
-
-      // Mark proposal as applied
-      await updateProposalStatus(sessionId, "applied");
-
-      return NextResponse.json({
-        sha: result.sha,
-        branch: result.branch,
-        prNumber: result.prNumber,
-        prUrl: result.prUrl,
-      });
+      return NextResponse.json({ ok: true, status: "rejected" });
     } finally {
       await releaseLock(sessionId);
     }

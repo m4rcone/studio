@@ -10,27 +10,31 @@ interface StudioBadgeProps {
 
 const variantStyles: Record<
   BadgeVariant,
-  { bg: string; text: string; dot: string }
+  { bg: string; text: string; dot: string; border: string }
 > = {
   active: {
-    bg: "bg-(--st-success-muted)",
-    text: "text-(--st-success)",
-    dot: "bg-(--st-success)",
-  },
-  approved: {
     bg: "bg-(--st-info-muted)",
     text: "text-(--st-info)",
     dot: "bg-(--st-info)",
+    border: "border-(--st-info-border)",
+  },
+  approved: {
+    bg: "bg-(--st-success-muted)",
+    text: "text-(--st-success)",
+    dot: "bg-(--st-success)",
+    border: "border-(--st-success-border)",
   },
   discarded: {
-    bg: "bg-(--st-gray-800)",
-    text: "text-(--st-text-muted)",
-    dot: "bg-(--st-gray-500)",
+    bg: "bg-(--st-danger-muted)",
+    text: "text-(--st-danger)",
+    dot: "bg-(--st-danger)",
+    border: "border-(--st-danger-border)",
   },
   info: {
-    bg: "bg-(--st-gray-800)",
-    text: "text-(--st-text-secondary)",
-    dot: "bg-(--st-gray-400)",
+    bg: "bg-(--st-warning-muted)",
+    text: "text-(--st-warning)",
+    dot: "bg-(--st-warning)",
+    border: "border-(--st-warning-border)",
   },
 };
 
@@ -43,7 +47,7 @@ export function StudioBadge({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-(--st-radius-full) px-2.5 py-0.5 text-[11px] font-medium ${s.bg} ${s.text}`}
+      className={`inline-flex items-center gap-1.5 rounded-(--st-radius-full) border px-2.5 py-1 text-[11px] font-medium ${s.bg} ${s.text} ${s.border}`}
     >
       {dot && <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />}
       {label}

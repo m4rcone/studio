@@ -18,15 +18,31 @@ export async function GET(_request: Request, { params }: RouteParams) {
     }
 
     if (!session.branch) {
-      return NextResponse.json({
-        status: "no_branch",
-        url: null,
-        estimatedUrl: null,
-      });
+      return NextResponse.json(
+        {
+          status: "no_branch",
+          url: null,
+          estimatedUrl: null,
+        },
+        {
+          headers: {
+            "Cache-Control":
+              "no-store, no-cache, must-revalidate, proxy-revalidate",
+          },
+        },
+      );
     }
 
-    const deploymentStatus = await getDeploymentStatus(session.branch);
-    return NextResponse.json(deploymentStatus);
+    const deploymentStatus = await getDeploymentStatus(
+      session.branch,
+      session.latestCommitSha,
+    );
+    return NextResponse.json(deploymentStatus, {
+      headers: {
+        "Cache-Control":
+          "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    });
   } catch {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

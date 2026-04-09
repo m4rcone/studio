@@ -1,118 +1,324 @@
 /*
  * Studio Design System
- * Independent from site theme — uses .studio scope to avoid conflicts.
- * Dark-first, editor-inspired aesthetic (Linear / VS Code).
+ * Quiet, minimal app shell with system typography.
  */
 
 .studio {
-  /* --- Palette --- */
+  --st-gray-25: #fcfcfd;
   --st-gray-50: #f8fafc;
   --st-gray-100: #f1f5f9;
   --st-gray-200: #e2e8f0;
   --st-gray-300: #cbd5e1;
   --st-gray-400: #94a3b8;
   --st-gray-500: #64748b;
-  --st-gray-600: #475569;
   --st-gray-700: #334155;
-  --st-gray-800: #1e293b;
-  --st-gray-850: #172033;
   --st-gray-900: #0f172a;
-  --st-gray-950: #020617;
+  --st-blue-600: #2563eb;
+  --st-green-600: #15803d;
+  --st-amber-600: #b45309;
+  --st-red-600: #dc2626;
+  --st-red-700: #b91c1c;
 
-  /* Accent — indigo */
-  --st-accent-400: #818cf8;
-  --st-accent-500: #6366f1;
-  --st-accent-600: #4f46e5;
-  --st-accent-700: #4338ca;
+  --st-bg: var(--st-gray-50);
+  --st-bg-elevated: #ffffff;
+  --st-bg-surface: #ffffff;
+  --st-bg-subtle: var(--st-gray-25);
+  --st-bg-hover: var(--st-gray-100);
+  --st-bg-input: #ffffff;
 
-  /* Semantic */
-  --st-bg: var(--st-gray-950);
-  --st-bg-elevated: var(--st-gray-900);
-  --st-bg-surface: var(--st-gray-850);
-  --st-bg-hover: var(--st-gray-800);
-  --st-bg-input: var(--st-gray-900);
-  --st-border: var(--st-gray-800);
-  --st-border-subtle: color-mix(in srgb, var(--st-gray-700) 50%, transparent);
-  --st-text: var(--st-gray-100);
-  --st-text-secondary: var(--st-gray-400);
+  --st-border: var(--st-gray-200);
+  --st-border-strong: var(--st-gray-300);
+  --st-border-subtle: #e7ecf2;
+  --st-line-strong: var(--st-gray-300);
+
+  --st-text: var(--st-gray-900);
+  --st-text-secondary: var(--st-gray-700);
   --st-text-muted: var(--st-gray-500);
-  --st-accent: var(--st-accent-500);
-  --st-accent-hover: var(--st-accent-400);
+
+  --st-accent: var(--st-gray-900);
+  --st-accent-hover: #1e293b;
   --st-accent-text: #ffffff;
+  --st-user-bubble: #111827;
 
-  /* Status */
-  --st-success: #22c55e;
-  --st-success-muted: color-mix(in srgb, #22c55e 15%, transparent);
-  --st-warning: #eab308;
-  --st-warning-muted: color-mix(in srgb, #eab308 15%, transparent);
-  --st-danger: #ef4444;
-  --st-danger-muted: color-mix(in srgb, #ef4444 15%, transparent);
-  --st-info: var(--st-accent-400);
-  --st-info-muted: color-mix(in srgb, var(--st-accent-400) 15%, transparent);
+  --st-success: var(--st-green-600);
+  --st-success-muted: #effaf3;
+  --st-success-border: #cfead6;
 
-  /* Sizing */
-  --st-radius-sm: 6px;
-  --st-radius: 8px;
-  --st-radius-lg: 12px;
+  --st-warning: var(--st-amber-600);
+  --st-warning-muted: #fff7ed;
+  --st-warning-border: #fed7aa;
+
+  --st-danger: var(--st-red-600);
+  --st-danger-strong: var(--st-red-700);
+  --st-danger-muted: #fef2f2;
+  --st-danger-border: #fecaca;
+
+  --st-info: var(--st-blue-600);
+  --st-info-muted: #eff6ff;
+  --st-info-border: #bfdbfe;
+
+  --st-focus-soft: rgb(37 99 235 / 0.14);
+
+  --st-radius-sm: 8px;
+  --st-radius: 12px;
+  --st-radius-lg: 16px;
+  --st-radius-xl: 20px;
   --st-radius-full: 9999px;
 
-  /* Typography */
-  --st-font: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --st-font:
+    "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --st-font-display:
+    "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --st-font-mono:
     "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", monospace;
 
-  /* Shadows */
-  --st-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-  --st-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
-  --st-shadow-lg:
-    0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+  --st-shadow-sm: 0 6px 18px rgb(15 23 42 / 0.04);
+  --st-shadow: 0 12px 30px rgb(15 23 42 / 0.06);
+  --st-shadow-lg: 0 24px 60px rgb(15 23 42 / 0.08);
 
-  /* Apply globals */
-  background-color: var(--st-bg);
+  position: relative;
+  min-height: 100%;
+  background: var(--st-bg);
   color: var(--st-text);
+  color-scheme: light;
   font-family: var(--st-font);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* --- Scrollbar (Webkit) --- */
-.studio ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+.studio ::selection {
+  background: rgb(37 99 235 / 0.16);
 }
+
+.studio a,
+.studio button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgb(37 99 235 / 0.12);
+}
+
+.studio .st-panel {
+  border: 1px solid var(--st-border-subtle);
+  border-radius: var(--st-radius-lg);
+  background: var(--st-bg-surface);
+  box-shadow: var(--st-shadow-sm);
+}
+
+.studio .st-panel-muted {
+  background: var(--st-bg-subtle);
+}
+
+.studio .st-panel-hero::after {
+  display: none;
+}
+
+.studio .st-metric {
+  border: 1px solid var(--st-border-subtle);
+  border-radius: var(--st-radius);
+  background: var(--st-bg-subtle);
+}
+
+.studio .st-link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border: 1px solid var(--st-border);
+  border-radius: var(--st-radius-full);
+  background: var(--st-bg-surface);
+  padding: 0.8rem 1rem;
+  color: var(--st-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.studio .st-link-button:hover {
+  border-color: var(--st-border-strong);
+  background: var(--st-bg-hover);
+}
+
+.studio .st-link-button-primary {
+  border-color: transparent;
+  background: var(--st-accent);
+  color: var(--st-accent-text);
+}
+
+.studio .st-link-button-primary:hover {
+  background: var(--st-accent-hover);
+}
+
+.studio .st-focus-ring:focus-visible {
+  outline: 2px solid var(--st-info);
+  outline-offset: 2px;
+}
+
+.studio ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
 .studio ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .studio ::-webkit-scrollbar-thumb {
-  background: var(--st-gray-700);
-  border-radius: 3px;
-}
-.studio ::-webkit-scrollbar-thumb:hover {
-  background: var(--st-gray-600);
+  border-radius: 9999px;
+  background: rgb(148 163 184 / 0.35);
 }
 
-/* --- Streaming dots animation --- */
+.studio ::-webkit-scrollbar-thumb:hover {
+  background: rgb(148 163 184 / 0.55);
+}
+
 @keyframes st-pulse {
   0%,
   100% {
-    opacity: 0.3;
+    opacity: 0.25;
   }
   50% {
     opacity: 1;
   }
 }
+
 .studio .st-dot {
-  animation: st-pulse 1.4s ease-in-out infinite;
+  animation: st-pulse 1.2s ease-in-out infinite;
 }
 
-/* --- Dialog backdrop --- */
+.studio dialog {
+  color: var(--st-text);
+  overscroll-behavior: contain;
+}
+
 .studio dialog::backdrop {
-  background: rgb(0 0 0 / 0.6);
+  background: rgb(15 23 42 / 0.22);
   backdrop-filter: blur(4px);
 }
 
-/* --- Focus ring utility --- */
-.studio .st-focus-ring:focus-visible {
-  outline: 2px solid var(--st-accent);
-  outline-offset: 2px;
+.studio .st-markdown {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.studio .st-markdown > * + * {
+  margin-top: 0.9rem;
+}
+
+.studio .st-markdown :where(p, ul, ol, blockquote) {
+  color: inherit;
+}
+
+.studio .st-markdown :where(h1, h2, h3, h4) {
+  font-family: var(--st-font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.studio .st-markdown h1 {
+  font-size: 1.25rem;
+}
+
+.studio .st-markdown h2 {
+  font-size: 1.1rem;
+}
+
+.studio .st-markdown h3,
+.studio .st-markdown h4 {
+  font-size: 1rem;
+}
+
+.studio .st-markdown :where(ul, ol) {
+  padding-left: 1.35rem;
+}
+
+.studio .st-markdown ul {
+  list-style: disc;
+}
+
+.studio .st-markdown ol {
+  list-style: decimal;
+}
+
+.studio .st-markdown li + li {
+  margin-top: 0.35rem;
+}
+
+.studio .st-markdown a {
+  color: var(--st-info);
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.14em;
+}
+
+.studio .st-markdown a:hover {
+  color: #1d4ed8;
+}
+
+.studio .st-markdown :not(pre) > code {
+  border: 1px solid var(--st-border-subtle);
+  border-radius: 0.45rem;
+  background: var(--st-bg-subtle);
+  padding: 0.12rem 0.38rem;
+  font-family: var(--st-font-mono);
+  font-size: 0.85em;
+}
+
+.studio .st-markdown pre {
+  overflow-x: auto;
+  border: 1px solid var(--st-border-subtle);
+  border-radius: var(--st-radius);
+  background: var(--st-gray-900);
+  padding: 0.9rem 1rem;
+  color: #e2e8f0;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+}
+
+.studio .st-markdown pre code {
+  font-family: var(--st-font-mono);
+  font-size: 0.8rem;
+  line-height: 1.65;
+  white-space: pre;
+}
+
+.studio .st-markdown blockquote {
+  border-left: 3px solid var(--st-border-strong);
+  padding-left: 0.9rem;
+  color: var(--st-text-secondary);
+}
+
+.studio .st-markdown hr {
+  border: 0;
+  border-top: 1px solid var(--st-border-subtle);
+}
+
+.studio .st-markdown-table {
+  overflow-x: auto;
+}
+
+.studio .st-markdown table {
+  width: 100%;
+  min-width: 28rem;
+  border-collapse: collapse;
+  border: 1px solid var(--st-border-subtle);
+  border-radius: var(--st-radius);
+  background: var(--st-bg-subtle);
+}
+
+.studio .st-markdown th,
+.studio .st-markdown td {
+  border: 1px solid var(--st-border-subtle);
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.studio .st-markdown th {
+  background: rgb(15 23 42 / 0.04);
+  font-weight: 600;
 }
