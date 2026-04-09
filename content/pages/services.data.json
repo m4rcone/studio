@@ -59,8 +59,19 @@
             ]
           },
           {
-            "id": "svc-renovation",
+            "id": "svc-consultoria-reforma",
             "number": "04",
+            "name": "Consultoria para reforma",
+            "description": "Orientação estratégica para reformas residenciais e comerciais",
+            "details": [
+              "Planejamento de layout",
+              "Materiais e acabamentos",
+              "Acompanhamento técnico"
+            ]
+          },
+          {
+            "id": "svc-renovation",
+            "number": "05",
             "name": "Renovation & Retrofit",
             "description": "Modernization of existing spaces with precise interventions that respect the structure and maximize results within the available budget.",
             "details": [
@@ -72,7 +83,7 @@
           },
           {
             "id": "svc-lighting",
-            "number": "05",
+            "number": "06",
             "name": "Lighting Consulting",
             "description": "Lighting design that enhances the architecture, sets intentional atmospheres, and meets functional needs with energy efficiency.",
             "details": [
@@ -84,7 +95,7 @@
           },
           {
             "id": "svc-management",
-            "number": "06",
+            "number": "07",
             "name": "Construction Management",
             "description": "Periodic site supervision to ensure faithful execution of the design, quality control, and agile resolution of any on-site issues.",
             "details": [
