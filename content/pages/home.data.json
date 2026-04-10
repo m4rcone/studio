@@ -31,10 +31,22 @@
       "id": "office-stats",
       "data": {
         "items": [
-          { "value": "15+", "label": "Years of experience" },
-          { "value": "380+", "label": "Projects delivered" },
-          { "value": "98%", "label": "Client satisfaction" },
-          { "value": "12", "label": "Awards won" }
+          {
+            "value": "15+",
+            "label": "Years of experience"
+          },
+          {
+            "value": "380+",
+            "label": "Projects delivered"
+          },
+          {
+            "value": "98%",
+            "label": "Client satisfaction"
+          },
+          {
+            "value": "12",
+            "label": "Awards won"
+          }
         ]
       }
     },
@@ -45,7 +57,7 @@
         "eyebrow": "Portfolio",
         "headline": "Projects that transform spaces",
         "subheadline": "A selection of our most recent work in residential and commercial architecture.",
-        "viewAllLabel": "View full portfolio",
+        "viewAllLabel": "View all projects",
         "viewAllHref": "/portfolio",
         "items": [
           {
