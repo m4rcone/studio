@@ -6,12 +6,12 @@
         "href": "/"
       },
       {
-        "label": "Portfolio",
-        "href": "/portfolio"
-      },
-      {
         "label": "Services",
         "href": "/services"
+      },
+      {
+        "label": "Portfolio",
+        "href": "/portfolio"
       },
       {
         "label": "About",
