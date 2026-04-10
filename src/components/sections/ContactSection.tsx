@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import type { ContactSectionProps } from "@/lib/studio/schemas/sections/contact-section.schema";
 
@@ -19,13 +18,29 @@ export function ContactSection({
   whatsappLabel,
   fields,
   submitLabel,
-  successMessage,
 }: ContactSectionProps) {
-  const [submitted, setSubmitted] = useState(false);
-
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted(true);
+    const form = e.currentTarget as HTMLFormElement;
+    const formData = new FormData(form);
+    const entries = fields
+      .map((field) => {
+        const value = formData.get(field.name);
+        if (typeof value !== "string" || !value.trim()) {
+          return null;
+        }
+
+        return `${field.label}: ${value.trim()}`;
+      })
+      .filter(Boolean);
+
+    const separator = whatsappUrl.includes("?") ? "&" : "?";
+    const message = encodeURIComponent(entries.join("\n"));
+    window.open(
+      `${whatsappUrl}${separator}text=${message}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
   }
 
   return (
@@ -85,64 +100,53 @@ export function ContactSection({
 
         {/* Right: form */}
         <div className="bg-muted p-8 sm:p-10">
-          {submitted ? (
-            <div className="flex h-full items-center justify-center py-16 text-center">
-              <div>
-                <div className="bg-secondary mx-auto mb-6 h-px w-12" />
-                <p className="text-foreground font-heading text-2xl">
-                  {successMessage}
-                </p>
-              </div>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {fields.map((field) => (
-                <div key={field.name}>
-                  <label
-                    className="text-muted-foreground mb-2 block text-xs tracking-widest uppercase"
-                    htmlFor={field.name}
-                  >
-                    {field.label}
-                    {field.required && (
-                      <span className="text-secondary ml-1">*</span>
-                    )}
-                  </label>
-                  {field.type === "textarea" ? (
-                    <textarea
-                      id={field.name}
-                      name={field.name}
-                      required={field.required}
-                      rows={4}
-                      className="bg-background border-foreground/10 text-foreground focus:border-secondary focus-visible:ring-secondary w-full resize-none border px-4 py-3 text-sm transition-colors focus:outline-none focus-visible:ring-2"
-                    />
-                  ) : (
-                    <input
-                      id={field.name}
-                      name={field.name}
-                      type={field.type}
-                      required={field.required}
-                      autoComplete={
-                        field.type === "email"
-                          ? "email"
-                          : field.type === "tel"
-                            ? "tel"
-                            : field.name === "name"
-                              ? "name"
-                              : undefined
-                      }
-                      className="bg-background border-foreground/10 text-foreground focus:border-secondary focus-visible:ring-secondary w-full border px-4 py-3 text-sm transition-colors focus:outline-none focus-visible:ring-2"
-                    />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {fields.map((field) => (
+              <div key={field.name}>
+                <label
+                  className="text-muted-foreground mb-2 block text-xs tracking-widest uppercase"
+                  htmlFor={field.name}
+                >
+                  {field.label}
+                  {field.required && (
+                    <span className="text-secondary ml-1">*</span>
                   )}
-                </div>
-              ))}
-              <button
-                type="submit"
-                className="bg-primary text-primary-foreground w-full px-6 py-4 text-sm tracking-wide uppercase transition-opacity hover:opacity-90"
-              >
-                {submitLabel}
-              </button>
-            </form>
-          )}
+                </label>
+                {field.type === "textarea" ? (
+                  <textarea
+                    id={field.name}
+                    name={field.name}
+                    required={field.required}
+                    rows={4}
+                    className="bg-background border-foreground/10 text-foreground focus:border-secondary focus-visible:ring-secondary w-full resize-none border px-4 py-3 text-sm transition-colors focus:outline-none focus-visible:ring-2"
+                  />
+                ) : (
+                  <input
+                    id={field.name}
+                    name={field.name}
+                    type={field.type}
+                    required={field.required}
+                    autoComplete={
+                      field.type === "email"
+                        ? "email"
+                        : field.type === "tel"
+                          ? "tel"
+                          : field.name === "name"
+                            ? "name"
+                            : undefined
+                    }
+                    className="bg-background border-foreground/10 text-foreground focus:border-secondary focus-visible:ring-secondary w-full border px-4 py-3 text-sm transition-colors focus:outline-none focus-visible:ring-2"
+                  />
+                )}
+              </div>
+            ))}
+            <button
+              type="submit"
+              className="bg-primary text-primary-foreground w-full px-6 py-4 text-sm tracking-wide uppercase transition-opacity hover:opacity-90"
+            >
+              {submitLabel}
+            </button>
+          </form>
         </div>
       </div>
     </section>

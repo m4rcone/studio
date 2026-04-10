@@ -1,162 +1,121 @@
-# Content Editing Guide — Atlas Architecture
+# Editing Guide — Studio Repository
 
-Rules and procedures for editing site content via AI.
+This guide is repository-specific and operational. Use it when editing content,
+adding pages, or maintaining the Studio workflow.
 
----
+## What Can Be Edited Directly
 
-## General principles
+### Safe content edits
 
-1. **Only edit files in `content/`** — never modify components, TypeScript types, code, or configuration
-2. **Verify structure from TypeScript interfaces** — before editing, read the component interface in `src/components/sections/` to understand valid fields, constraints, and required props
-3. **Never invent content** — if a request is ambiguous, ask for clarification
-4. **Preserve consistency** — when adding or reordering items to lists, follow the pattern of existing items
-5. **Show before applying** — present the before/after diff to the client for approval before create a new branch, new commit, and open a PR
-6. **Use the correct file** — global data goes in `site.config.json`, navigation goes in `navigation.json`, page-specific content goes in `pages/[slug].data.json`
+- `content/site.config.json`
+  Brand text, contact info, social links, default SEO.
+- `content/navigation.json`
+  Header/footer links and CTA labels/targets.
+- `content/pages/*.data.json`
+  Page metadata, section order, section content, list items.
+- `content/media/manifest.json`
+  Media metadata and usage references.
 
----
+### Requires code changes
 
-## What can be edited
+- New section types
+- Changed section data shape
+- New public layout patterns
+- New Studio tools, permissions, or workflow states
+- New API behavior for contact flows beyond the current WhatsApp redirect
 
-### Text
+## Role Boundaries in the Current Studio
 
-- Titles, subtitles, descriptions, paragraphs
-- Button and CTA labels
-- Testimonial quotes and author names
-- List items (services, steps, projects, events)
-- Copyright text, taglines, partner bios
+### Client role
 
-### Contact data
+Can edit:
 
-- Phone, WhatsApp, email
-- Address (street, neighborhood, city, state, zip)
-- Social media links (instagram, linkedin; facebook is null = hidden)
+- Existing page content
+- Navigation labels/links
+- Contact and SEO content
+- List items inside existing collections
+- Section order and item order
 
-### Images
+Cannot edit:
 
-- Replace existing images (requires uploading the real file to `public/media/`)
-- Update alt text
-- Update metadata in `content/media/manifest.json`
+- Theme tokens in `site.config.json.theme.*`
+- `content/media/manifest.json`
+- Code, schemas, components, or docs outside approved content scope
 
-### Content structure
+### Team role
 
-- Add/remove items in lists (e.g. new testimonial, new portfolio project, new service)
-- Reorder items within lists
-- Reorder sections within a page
+Can edit everything in `content/`, including `media/manifest.json`.
 
-### SEO
+## Editing Workflow
 
-- Page titles and descriptions in each page's `meta.title` and `meta.description`
+### For content-only changes
 
-### Navigation
+1. Read `src/lib/section-registry.ts` to confirm the section exists.
+2. Read the matching schema in `src/lib/studio/schemas/sections/`.
+3. Read the current content file in `content/`.
+4. Make the smallest valid change possible.
+5. Validate with `npm run lint` and `npm run build` when the change is non-trivial.
 
-- Menu labels and links in `navigation.json`
+### For new pages or section capabilities
 
----
+1. Add or update the schema.
+2. Register it in `src/lib/section-registry.ts`.
+3. Add or update the section component.
+4. Add or update the content file.
+5. Update this file and `ai/CONVENTIONS.md`.
+6. If this changes how new projects should be scaffolded, update
+   `ai/TEMPLATE_PROMPT_NEW_DESIGN.md`.
 
-## What cannot be edited (requires a developer)
+## Common Edit Locations
 
-- Creating new pages
-- Adding new section types
-- Modifying components, TypeScript types, or code
-- Changing design tokens (colors, fonts) — requires running `npm run generate-theme` after editing `site.config.json`
-- Removing entire pages
+| Intent                 | File                                | Path pattern                                  |
+| ---------------------- | ----------------------------------- | --------------------------------------------- |
+| Change site phone      | `content/site.config.json`          | `contact.phone`                               |
+| Change default SEO     | `content/site.config.json`          | `seo.*`                                       |
+| Change nav CTA         | `content/navigation.json`           | `header.cta.*`                                |
+| Update home hero title | `content/pages/home.data.json`      | `sections[id=main-hero].data.headline`        |
+| Add testimonial        | `content/pages/home.data.json`      | `sections[id=client-testimonials].data.items` |
+| Reorder services       | `content/pages/services.data.json`  | `sections[id=services-list].data.items`       |
+| Update contact fields  | `content/pages/contact.data.json`   | `sections[id=contact-form].data.fields`       |
+| Add portfolio project  | `content/pages/portfolio.data.json` | `sections[id=projects-gallery].data.projects` |
 
----
+## Section Collection Reference
 
-## Editing procedure
+Use the actual section `id` from the page file.
 
-### To edit a text field:
+- `features` → `data.items`
+- `stats` → `data.items`
+- `portfolio-preview` → `data.items`
+- `testimonials` → `data.items`
+- `team` → `data.members`
+- `timeline` → `data.events`
+- `philosophy` → `data.values`
+- `services-list` → `data.items`
+- `process-steps` → `data.steps`
+- `portfolio-gallery` → `data.projects`
+- `contact-section` → `data.fields`
 
-1. Identify which file contains the field:
-   - Global data → `site.config.json`
-   - Navigation → `navigation.json`
-   - Page content → `pages/[slug].data.json`
+## Current Project-Specific Notes
 
-2. Read the TypeScript interface of the corresponding component in `src/components/sections/` (or `src/types/content.ts` for global structures) to confirm valid fields, constraints, and types
+- Public site copy is in English.
+- The contact page form opens WhatsApp with the form values; there is no server
+  submission endpoint.
+- Portfolio category labels are rendered from fixed category values used in the
+  content: `residential`, `commercial`, `corporate`.
+- `successMessage` on `contact-section` is legacy content and is not part of
+  the current rendered UX.
+- `studio.md` is currently locally modified and should not be rewritten unless
+  the change explicitly targets that document.
 
-3. Locate the exact field using the section `id` and field name
+## Validation Checklist
 
-4. Apply the change respecting:
-   - Character limits in JSDoc comments
-   - Union type allowed values (e.g. `"primary" | "secondary" | "whatsapp" | "outline"`)
-   - Fields without `?` are required and cannot be removed
+Before finishing:
 
-### To add an item to a list:
-
-1. Read existing items to understand the pattern
-2. Read the component interface for required fields
-3. Create the new item following the same structure
-4. Position it at the desired index in the array
-
----
-
-## Common edit examples
-
-| Request                           | File                        | Field                                                             |
-| --------------------------------- | --------------------------- | ----------------------------------------------------------------- |
-| "Change the phone number"         | `site.config.json`          | `contact.phone`                                                   |
-| "Update the hero headline"        | `pages/home.data.json`      | `sections[id=main-hero].data.headline`                            |
-| "Add a new testimonial"           | `pages/home.data.json`      | `sections[id=client-testimonials].data.items`                     |
-| "Add a project to the portfolio"  | `pages/portfolio.data.json` | `sections[id=projects-gallery].data.projects`                     |
-| "Change the Instagram link"       | `site.config.json`          | `social.instagram`                                                |
-| "Reorder the services"            | `pages/services.data.json`  | `sections[id=services-list].data.items`                           |
-| "Change the menu CTA button text" | `navigation.json`           | `header.cta.label`                                                |
-| "Update Ana Beatriz's bio"        | `pages/about.data.json`     | `sections[id=founding-partners].data.members[id=partner-ana].bio` |
-| "Add a milestone to the timeline" | `pages/about.data.json`     | `sections[id=studio-history].data.events`                         |
-
----
-
-## Site-specific notes
-
-### Client
-
-**Atlas Architecture** (Atlas Arquitetura) — Architecture and interior design studio in São Paulo, Brazil.
-
-- Segments: high-end residential + commercial/corporate
-- Target audience: upper-middle to high income, ages 30–55
-- Tone: sophisticated, contemporary, professional but accessible
-- Instagram is the primary acquisition channel
-- Primary CTA always directs to WhatsApp: `https://wa.me/5511987654321`
-
-### Pages
-
-| Slug         | File                                | Sections                                                        |
-| ------------ | ----------------------------------- | --------------------------------------------------------------- |
-| `/`          | `content/pages/home.data.json`      | `hero` → `stats` → `portfolio-preview` → `testimonials` → `cta` |
-| `/about`     | `content/pages/about.data.json`     | `page-header` → `philosophy` → `team` → `timeline`              |
-| `/portfolio` | `content/pages/portfolio.data.json` | `page-header` → `portfolio-gallery`                             |
-| `/services`  | `content/pages/services.data.json`  | `page-header` → `services-list` → `process-steps` → `cta`       |
-| `/contact`   | `content/pages/contact.data.json`   | `page-header` → `contact-section`                               |
-
-### Portfolio categories
-
-Accepted values for project `category`: `"residential"` | `"commercial"` | `"corporate"`.
-These are hardcoded as display labels in `PortfolioGallery.tsx` and `PortfolioPreview.tsx`. Do not use other values.
-
-### WhatsApp format
-
-The `contact.whatsapp` field in `site.config.json` must be in international format without spaces or symbols: `5511987654321` (55 = Brazil, 11 = area code, number). The CTA button uses the URL `https://wa.me/5511987654321` directly in `navigation.json`.
-
-### Color palette
-
-| Token        | Hex       | Used for                                                          |
-| ------------ | --------- | ----------------------------------------------------------------- |
-| `primary`    | `#1a1a1a` | Dark section backgrounds (stats, process-steps, cta, footer)      |
-| `secondary`  | `#c9a96e` | Gold accents, stat numbers, decorative lines, hover states        |
-| `background` | `#fafaf8` | Warm white general background                                     |
-| `muted`      | `#f5f4f0` | Alternating section backgrounds (testimonials, page-header, form) |
-
-### Images
-
-All image paths in `content/pages/*.data.json` reference `.svg` placeholder files in `public/media/`. These are descriptive placeholders — they must be replaced with real project photos when the client provides them.
-
-**To replace an image:**
-
-1. Save the real image in `public/media/` using the same filename (e.g. `project-higienopolis-house.webp`)
-2. Update the `src` field in the relevant JSON (e.g. change `.svg` → `.webp`)
-3. Update the `alt` text if needed
-4. Update `content/media/manifest.json`
-
-### Validation after editing
-
-After editing content, verify the JSON is syntactically correct (no stray commas or quotes) and that it respects the TypeScript interface of the corresponding component. The build (`npm run build`) will catch type mismatches.
+- JSON stays valid.
+- The edited content still matches the relevant Zod schema.
+- Any new page/section/documentation change also updates:
+  - `ai/CONVENTIONS.md`
+  - `ai/EDITING_GUIDE.md`
+- `npm run lint` passes.
+- `npm run build` passes, or the report clearly notes if a build issue is only
+  due to blocked Google Fonts network access.

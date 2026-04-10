@@ -4,60 +4,62 @@
  */
 
 .studio {
-  --st-gray-25: #fcfcfd;
-  --st-gray-50: #f8fafc;
-  --st-gray-100: #f1f5f9;
-  --st-gray-200: #e2e8f0;
-  --st-gray-300: #cbd5e1;
-  --st-gray-400: #94a3b8;
-  --st-gray-500: #64748b;
-  --st-gray-700: #334155;
-  --st-gray-900: #0f172a;
-  --st-blue-600: #2563eb;
-  --st-green-600: #15803d;
-  --st-amber-600: #b45309;
-  --st-red-600: #dc2626;
-  --st-red-700: #b91c1c;
+  --st-gray-25: #16181d;
+  --st-gray-50: #1b1e24;
+  --st-gray-100: #232833;
+  --st-gray-200: #2d3441;
+  --st-gray-300: #3c4657;
+  --st-gray-400: #667085;
+  --st-gray-500: #98a2b3;
+  --st-gray-700: #d0d5dd;
+  --st-gray-900: #f5f7fa;
 
-  --st-bg: var(--st-gray-50);
-  --st-bg-elevated: #ffffff;
-  --st-bg-surface: #ffffff;
-  --st-bg-subtle: var(--st-gray-25);
-  --st-bg-hover: var(--st-gray-100);
-  --st-bg-input: #ffffff;
+  --st-blue-600: #7c9cff;
+  --st-green-600: #32c48d;
+  --st-amber-600: #f5b942;
+  --st-red-600: #ff6b6b;
+  --st-red-700: #ff4d4f;
 
-  --st-border: var(--st-gray-200);
-  --st-border-strong: var(--st-gray-300);
-  --st-border-subtle: #e7ecf2;
-  --st-line-strong: var(--st-gray-300);
+  --st-bg: #111318;
+  --st-bg-elevated: #181c23;
+  --st-bg-surface: #1b1f27;
+  --st-bg-subtle: #151922;
+  --st-bg-hover: #232938;
+  --st-bg-input: #202632;
 
-  --st-text: var(--st-gray-900);
-  --st-text-secondary: var(--st-gray-700);
-  --st-text-muted: var(--st-gray-500);
+  --st-border: #2a3140;
+  --st-border-strong: #394355;
+  --st-border-subtle: #252b36;
+  --st-line-strong: #3c4657;
 
-  --st-accent: var(--st-gray-900);
-  --st-accent-hover: #1e293b;
-  --st-accent-text: #ffffff;
-  --st-user-bubble: #111827;
+  --st-text: #f3f5f7;
+  --st-text-secondary: #d0d5dd;
+  --st-text-muted: #98a2b3;
 
-  --st-success: var(--st-green-600);
-  --st-success-muted: #effaf3;
-  --st-success-border: #cfead6;
+  --st-accent: #f3f5f7;
+  --st-accent-hover: #dfe3e8;
+  --st-accent-text: #111318;
+  --st-user-bubble: #2c3444;
 
-  --st-warning: var(--st-amber-600);
-  --st-warning-muted: #fff7ed;
-  --st-warning-border: #fed7aa;
+  --st-success: #32c48d;
+  --st-success-muted: #11241d;
+  --st-success-border: #1d4f3b;
 
-  --st-danger: var(--st-red-600);
-  --st-danger-strong: var(--st-red-700);
-  --st-danger-muted: #fef2f2;
-  --st-danger-border: #fecaca;
+  --st-warning: #f5b942;
+  --st-warning-muted: #2a2112;
+  --st-warning-border: #5c4516;
 
-  --st-info: var(--st-blue-600);
-  --st-info-muted: #eff6ff;
-  --st-info-border: #bfdbfe;
+  --st-danger: #ff6b6b;
+  --st-danger-strong: #ff4d4f;
+  --st-danger-muted: #2a1719;
+  --st-danger-border: #5a2529;
 
-  --st-focus-soft: rgb(37 99 235 / 0.14);
+  --st-info: #7c9cff;
+  --st-info-muted: #151f38;
+  --st-info-border: #2a3f73;
+
+  --st-focus-soft: rgb(124 156 255 / 0.22);
+  color-scheme: dark;
 
   --st-radius-sm: 8px;
   --st-radius: 12px;
@@ -66,11 +68,11 @@
   --st-radius-full: 9999px;
 
   --st-font:
-    "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont,
-    "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+    Arial, sans-serif;
   --st-font-display:
-    "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont,
-    "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Helvetica Neue", Arial, sans-serif;
   --st-font-mono:
     "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", monospace;
 
@@ -273,7 +275,7 @@
   overflow-x: auto;
   border: 1px solid var(--st-border-subtle);
   border-radius: var(--st-radius);
-  background: var(--st-gray-900);
+  background: var(--st-bg-subtle);
   padding: 0.9rem 1rem;
   color: #e2e8f0;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);

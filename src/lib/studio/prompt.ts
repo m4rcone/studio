@@ -138,6 +138,8 @@ If the real schema shows the target is not an array, explain the limitation inst
 If the real schema reveals required or optional fields that are not obvious from the content file, use the schema as the source of truth.
 If \`propose_changes\` returns a tool error, do not keep guessing with multiple variants. Re-read the content/schema only if needed, make at most one corrected retry, and otherwise explain the constraint to the user.
 If the corrected retry also fails, stop immediately. Do not attempt a third proposal in the same user turn.
+For any actionable content edit request, do not end the turn with only commentary, a plan, or a summary. Keep going until you either create a proposal with \`propose_changes\` or explain the concrete blocking limitation.
+Never tell the user a change is ready for approval unless a \`propose_changes\` call succeeded in the current turn.
 Always write the proposal summary in English.`;
 
 const CONTENT_IS_DATA_SECTION = `## Safety

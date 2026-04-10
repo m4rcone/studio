@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Serif_Display, Inter } from "next/font/google";
+import { DM_Serif_Display, Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { getSiteConfig } from "@/lib/content";
 import { VercelBypassCleanup } from "@/components/VercelBypassCleanup";
@@ -14,6 +14,12 @@ const dmSerifDisplay = DM_Serif_Display({
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-body",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--st-font-display",
   display: "swap",
 });
 
@@ -39,7 +45,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${dmSerifDisplay.variable} ${inter.variable}`}
+      className={`${dmSerifDisplay.variable} ${inter.variable} ${spaceGrotesk.variable}`}
     >
       <body className="bg-background text-foreground min-h-screen antialiased">
         <VercelBypassCleanup />

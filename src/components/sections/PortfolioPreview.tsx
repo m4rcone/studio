@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { AppLink } from "@/components/ui/AppLink";
 import type {
   PortfolioPreviewProps,
   PortfolioPreviewItem,
@@ -44,12 +44,12 @@ export function PortfolioPreview({
               </p>
             )}
           </div>
-          <Link
+          <AppLink
             href={viewAllHref}
             className="text-foreground hover:text-secondary text-sm whitespace-nowrap underline underline-offset-4 transition-colors"
           >
             {viewAllLabel} →
-          </Link>
+          </AppLink>
         </div>
 
         {/* Asymmetric grid */}
@@ -83,35 +83,34 @@ function ProjectCard({
   className?: string;
 }) {
   const inner = (
-    <div
-      className={`group relative cursor-pointer overflow-hidden ${className}`}
-    >
+    <div className={`group relative overflow-hidden ${className}`}>
       <Image
         src={item.image.src}
         alt={item.image.alt}
         fill
-        className="object-cover transition-transform duration-700 group-hover:scale-105"
+        className="object-cover transition-transform duration-700 group-hover:scale-105 group-focus-visible:scale-105"
         sizes="(max-width: 768px) 100vw, 50vw"
       />
-      {/* Overlay */}
-      <div className="bg-foreground/0 group-hover:bg-foreground/50 absolute inset-0 transition-[background-color] duration-500" />
-      {/* Content on hover */}
-      <div className="absolute inset-0 flex translate-y-4 flex-col justify-end p-6 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+      <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100" />
+      <div className="absolute inset-x-0 bottom-0 p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100">
         <span className="text-secondary mb-1 text-xs tracking-widest uppercase">
           {CATEGORY_LABEL[item.category] ?? item.category}
         </span>
         <h3 className="font-heading mb-1 text-xl text-white">{item.name}</h3>
-        <p className="text-sm text-white/70">{item.location}</p>
-      </div>
-      {/* Always-visible subtle category badge */}
-      <div className="bg-background/90 text-foreground absolute top-4 left-4 px-3 py-1 text-xs tracking-wider uppercase transition-opacity duration-300 group-hover:opacity-0">
-        {CATEGORY_LABEL[item.category] ?? item.category}
+        <p className="text-sm text-white/80">{item.location}</p>
       </div>
     </div>
   );
 
   if (item.href) {
-    return <Link href={item.href}>{inner}</Link>;
+    return (
+      <AppLink
+        href={item.href}
+        className="focus-visible:ring-secondary block focus-visible:ring-2 focus-visible:outline-none"
+      >
+        {inner}
+      </AppLink>
+    );
   }
   return inner;
 }

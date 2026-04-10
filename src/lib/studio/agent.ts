@@ -28,7 +28,10 @@ export async function* runAgent(
 
   let iterations = 0;
   let proposalFailures = 0;
+  let proposalCreated = false;
+  let missingProposalRetryUsed = false;
   const startTime = Date.now();
+  const proposalRequired = requestNeedsProposal(userMessage);
 
   while (true) {
     const check = checkLimits(iterations, startTime, signal);
@@ -38,7 +41,7 @@ export async function* runAgent(
     }
 
     const stream = anthropic.messages.stream({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-haiku-4-5",
       max_tokens: AGENT_LIMITS.maxTokensPerTurn,
       system: systemPrompt,
       messages,
@@ -124,6 +127,7 @@ export async function* runAgent(
             const parsed = JSON.parse(result);
             if (parsed.proposalId) {
               proposalFailures = 0;
+              proposalCreated = true;
               yield {
                 type: "proposal_created",
                 proposalId: parsed.proposalId,
@@ -140,10 +144,86 @@ export async function* runAgent(
       messages.push({ role: "user", content: toolResults });
       iterations++;
     } else {
+      if (proposalRequired && !proposalCreated && !missingProposalRetryUsed) {
+        missingProposalRetryUsed = true;
+        messages.push({
+          role: "user",
+          content:
+            "This is an actionable content edit request. Do not end the turn with only commentary, a plan, or a summary. Read any needed content or schema files and either create a proposal with propose_changes or clearly explain the concrete blocking limitation. Never tell the user a change is ready to approve unless propose_changes succeeded.",
+        });
+        iterations++;
+        continue;
+      }
+
+      if (proposalRequired && !proposalCreated) {
+        yield {
+          type: "error",
+          message:
+            "This edit request ended without a structured proposal. Create a proposal with diffs, or explain the blocking limitation instead of stopping with a summary.",
+        };
+      }
+
       // End turn — no more tool calls
       break;
     }
   }
 
   yield { type: "done" };
+}
+
+function requestNeedsProposal(message: string): boolean {
+  const normalized = normalizeForIntentDetection(message);
+
+  const editSignals = [
+    "change",
+    "update",
+    "edit",
+    "rewrite",
+    "replace",
+    "move",
+    "reorder",
+    "swap",
+    "put",
+    "place",
+    "make ",
+    "remove",
+    "delete",
+    "add ",
+    "shorten",
+    "fix ",
+    "rename",
+    "rearrange",
+    "insert",
+    "before",
+    "after",
+    "mude",
+    "altere",
+    "edite",
+    "reescreva",
+    "substitua",
+    "troque",
+    "coloque",
+    "ponha",
+    "faca ",
+    "faça ",
+    "remova",
+    "apague",
+    "adicione",
+    "encurte",
+    "corrija",
+    "renomeie",
+    "reordene",
+    "reorganize",
+    "antes de",
+    "depois de",
+  ];
+
+  return editSignals.some((signal) => normalized.includes(signal));
+}
+
+function normalizeForIntentDetection(message: string): string {
+  return message
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase();
 }

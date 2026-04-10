@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { AppLink } from "@/components/ui/AppLink";
 import type { SiteConfig, Navigation } from "@/types/content";
 
 interface FooterProps {
@@ -13,12 +13,12 @@ export function Footer({ config, nav }: FooterProps) {
         <div className="mb-12 grid grid-cols-1 gap-12 md:grid-cols-3">
           {/* Brand */}
           <div>
-            <Link
+            <AppLink
               href="/"
               className="text-primary-foreground hover:text-secondary font-heading text-2xl transition-colors"
             >
               {config.brand.name}
-            </Link>
+            </AppLink>
             <p className="text-primary-foreground/50 mt-3 max-w-xs text-sm leading-relaxed">
               {config.brand.tagline}
             </p>
@@ -32,12 +32,12 @@ export function Footer({ config, nav }: FooterProps) {
             <ul className="space-y-2">
               {nav.header.links.map((link) => (
                 <li key={link.href}>
-                  <Link
+                  <AppLink
                     href={link.href}
                     className="text-primary-foreground/60 hover:text-secondary text-sm transition-colors"
                   >
                     {link.label}
-                  </Link>
+                  </AppLink>
                 </li>
               ))}
             </ul>
@@ -49,18 +49,18 @@ export function Footer({ config, nav }: FooterProps) {
               {nav.footer.contactLabel}
             </p>
             <div className="mb-6 space-y-2">
-              <a
+              <AppLink
                 href={`tel:${config.contact.phone}`}
                 className="text-primary-foreground/60 hover:text-secondary block text-sm transition-colors"
               >
                 {config.contact.phone}
-              </a>
-              <a
+              </AppLink>
+              <AppLink
                 href={`mailto:${config.contact.email}`}
                 className="text-primary-foreground/60 hover:text-secondary block text-sm transition-colors"
               >
                 {config.contact.email}
-              </a>
+              </AppLink>
               <p className="text-primary-foreground/60 text-sm">
                 {config.contact.address.street},{" "}
                 {config.contact.address.neighborhood}
@@ -74,34 +74,28 @@ export function Footer({ config, nav }: FooterProps) {
             </p>
             <div className="flex gap-4">
               {config.social.instagram && (
-                <a
+                <AppLink
                   href={config.social.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="text-primary-foreground/60 hover:text-secondary text-sm transition-colors"
                 >
                   Instagram
-                </a>
+                </AppLink>
               )}
               {config.social.linkedin && (
-                <a
+                <AppLink
                   href={config.social.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="text-primary-foreground/60 hover:text-secondary text-sm transition-colors"
                 >
                   LinkedIn
-                </a>
+                </AppLink>
               )}
               {config.social.facebook && (
-                <a
+                <AppLink
                   href={config.social.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="text-primary-foreground/60 hover:text-secondary text-sm transition-colors"
                 >
                   Facebook
-                </a>
+                </AppLink>
               )}
             </div>
           </div>
@@ -114,13 +108,13 @@ export function Footer({ config, nav }: FooterProps) {
           </p>
           <div className="flex gap-6">
             {nav.footer.links.map((link) => (
-              <Link
+              <AppLink
                 key={link.href}
                 href={link.href}
                 className="text-primary-foreground/40 hover:text-secondary text-xs transition-colors"
               >
                 {link.label}
-              </Link>
+              </AppLink>
             ))}
           </div>
         </div>

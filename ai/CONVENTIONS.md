@@ -1,99 +1,132 @@
-# Content Conventions — Atlas Architecture
+# Repository Conventions — Studio
 
-This document explains how site content is organized. It is used by AI agents and developers to understand the structure and make correct edits.
+This document is repository-specific. It gives the minimum context needed to
+understand how content, schemas, rendering, and Studio editing fit together.
 
----
+## Source of Truth Order
 
-## Content files
+Read these in this order when you need to understand or change the site:
 
-### site.config.json
+1. `src/lib/section-registry.ts`
+   This is the shared registry for section type, component, Zod schema, and
+   Studio collection metadata.
+2. `src/lib/studio/schemas/`
+   File-level and section-level validation rules.
+3. `content/`
+   Actual site data used at runtime.
+4. `src/components/sections/` and `src/components/layout/`
+   Visual implementation of the data model.
+5. `src/app/(site)/` and `src/app/(studio)/`
+   Routing and page composition.
 
-Global site data. Used by Header, Footer, meta tags, and as the source of design tokens.
+## Public Site Data Model
 
-```json
-{
-  "brand": {
-    "name": "Atlas Architecture",
-    "tagline": "We design spaces that tell your story",
-    "logo": "/media/atlas-logo.svg"
-  },
-  "theme": {
-    "colors": {
-      "primary": "#1a1a1a",
-      "primary-foreground": "#ffffff",
-      "secondary": "#c9a96e",
-      "secondary-foreground": "#1a1a1a",
-      "background": "#fafaf8",
-      "foreground": "#1a1a1a",
-      "muted": "#f5f4f0",
-      "muted-foreground": "#6b6b6b"
-    },
-    "fonts": { "heading": "DM Serif Display", "body": "Inter" },
-    "borderRadius": "0.125rem"
-  },
-  "contact": { "phone": "(11) 3456-7890", "whatsapp": "5511987654321", ... },
-  "social": { "instagram": "https://instagram.com/atlasarquitetura", "facebook": null, "linkedin": "..." },
-  "seo": { "defaultTitle": "...", "titleTemplate": "%s | Atlas Architecture", "defaultDescription": "..." }
-}
-```
+### Global files
 
-### navigation.json
+- `content/site.config.json`
+  Global brand, theme tokens, contact info, social links, and default SEO.
+- `content/navigation.json`
+  Header and footer navigation plus primary CTA.
+- `content/media/manifest.json`
+  Registry of media assets and where they are used.
 
-Menu structure: Home, Portfolio, Services, About, Contact. CTA directs to WhatsApp.
+### Page files
 
-### pages/[slug].data.json
+- `content/pages/*.data.json`
+  Each file defines one page.
+- A page contains:
+  - `slug`
+  - `meta`
+  - `sections[]`
+- Section render order is the array order.
+- Each section uses:
+  - `type`
+  - `id`
+  - `data`
 
-Each page has a data file with this structure:
+### Page composition
 
-```json
-{
-  "slug": "home",
-  "meta": { "title": "Home", "description": "..." },
-  "sections": [
-    { "type": "hero", "id": "main-hero", "data": {} },
-    { "type": "stats", "id": "office-stats", "data": {} }
-  ]
-}
-```
+- `/` reads `content/pages/home.data.json`
+- `/(site)/[slug]` reads the matching file in `content/pages/*.data.json`
+- Both routes use the shared renderer in
+  [SectionsRenderer.tsx](/Users/marconeboff/Dev/studio/src/components/sections/SectionsRenderer.tsx)
 
-The **order of sections** in the array defines the **render order on the page**.
+## Studio Runtime Model
 
-### media/manifest.json
+### Main backend layers
 
-Registry of all images used on the site. Images are SVG placeholders — replace with real photos when available.
+- `src/lib/studio/agent.ts`
+  Runs the model/tool loop.
+- `src/lib/studio/proposal.ts`
+  Validates operations, produces diffs, persists pending proposals.
+- `src/lib/studio/apply.ts`
+  Applies approved operations and creates commits/PRs.
+- `src/lib/studio/deployment.ts`
+  Resolves preview deployment status.
+- `src/lib/studio/permissions.ts`
+  Enforces edit permissions by role.
 
----
+### Content access
 
-## Available section types
+- `src/lib/studio/content-provider.ts` selects GitHub or filesystem provider.
+- `listFiles()` is recursive in both providers.
+- The Studio may read:
+  - `content/`
+  - `ai/`
+  - `src/lib/studio/schemas/`
 
-| Type                | Component                                      | Description                                                                | Required props                                                |
-| ------------------- | ---------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `hero`              | `src/components/sections/Hero.tsx`             | Split layout: text (left) + large image (right). Used at the top of pages. | `headline`, `cta`, `image`                                    |
-| `stats`             | `src/components/sections/Stats.tsx`            | Dark horizontal strip with large numbers in gold.                          | `items` (array of `value` + `label`)                          |
-| `page-header`       | `src/components/sections/PageHeader.tsx`       | Inner-page banner: centered title, gold accent line, optional subtitle.    | `title`                                                       |
-| `portfolio-preview` | `src/components/sections/PortfolioPreview.tsx` | Asymmetric grid with 3–4 featured projects for the home page.              | `eyebrow`, `headline`, `viewAllLabel`, `viewAllHref`, `items` |
-| `testimonials`      | `src/components/sections/Testimonials.tsx`     | Grid of quote cards with decorative quotation marks and a gold divider.    | `eyebrow`, `headline`, `items`                                |
-| `features`          | `src/components/sections/Features.tsx`         | Generic card grid with optional emoji icon, title, and description.        | `headline`, `items`                                           |
-| `philosophy`        | `src/components/sections/Philosophy.tsx`       | Split heading/body + 4-column values grid. Used on the About page.         | `eyebrow`, `headline`, `body`, `values`                       |
-| `team`              | `src/components/sections/Team.tsx`             | Team member photos and bios in a 2-column grid.                            | `eyebrow`, `headline`, `members`                              |
-| `timeline`          | `src/components/sections/Timeline.tsx`         | Alternating timeline with year nodes in dark background and gold text.     | `eyebrow`, `headline`, `events`                               |
-| `portfolio-gallery` | `src/components/sections/PortfolioGallery.tsx` | Filterable gallery by category (residential / commercial / corporate).     | `allLabel`, `projects`                                        |
-| `services-list`     | `src/components/sections/ServicesList.tsx`     | Numbered service list with name, description, and optional detail bullets. | `eyebrow`, `headline`, `items`                                |
-| `process-steps`     | `src/components/sections/ProcessSteps.tsx`     | Numbered process step cards on a dark background.                          | `eyebrow`, `headline`, `steps`                                |
-| `contact-section`   | `src/components/sections/ContactSection.tsx`   | Quote form + contact info + WhatsApp button (client component).            | All fields in `ContactSectionProps`                           |
-| `cta`               | `src/components/sections/Cta.tsx`              | Dark conversion banner with large headline, optional text, and button.     | `headline`, `cta`                                             |
+## Current Section Catalog
 
----
+The canonical definitions live in `src/lib/section-registry.ts`.
 
-## File relationships
+| Type                | Component                                      | Main collections |
+| ------------------- | ---------------------------------------------- | ---------------- |
+| `hero`              | `src/components/sections/Hero.tsx`             | none             |
+| `features`          | `src/components/sections/Features.tsx`         | `data.items`     |
+| `cta`               | `src/components/sections/Cta.tsx`              | none             |
+| `stats`             | `src/components/sections/Stats.tsx`            | `data.items`     |
+| `page-header`       | `src/components/sections/PageHeader.tsx`       | none             |
+| `portfolio-preview` | `src/components/sections/PortfolioPreview.tsx` | `data.items`     |
+| `testimonials`      | `src/components/sections/Testimonials.tsx`     | `data.items`     |
+| `team`              | `src/components/sections/Team.tsx`             | `data.members`   |
+| `timeline`          | `src/components/sections/Timeline.tsx`         | `data.events`    |
+| `philosophy`        | `src/components/sections/Philosophy.tsx`       | `data.values`    |
+| `services-list`     | `src/components/sections/ServicesList.tsx`     | `data.items`     |
+| `process-steps`     | `src/components/sections/ProcessSteps.tsx`     | `data.steps`     |
+| `portfolio-gallery` | `src/components/sections/PortfolioGallery.tsx` | `data.projects`  |
+| `contact-section`   | `src/components/sections/ContactSection.tsx`   | `data.fields`    |
+| `project-detail`    | `src/components/sections/ProjectDetail.tsx`    | none             |
 
-```
-site.config.json ──→ Header, Footer, Tailwind tokens, global meta tags
-navigation.json ───→ Header (menu + CTA), Footer (links + labels)
-pages/*.data.json ─→ Content of each page (section array)
-media/manifest.json → Image registry and metadata
-src/types/content.ts → TypeScript interfaces (source of truth for data structure)
-src/lib/section-registry.ts → Maps section type → React component
-```
+## Current Page Inventory
 
-> **Note:** TypeScript interfaces with JSDoc comments in `src/components/sections/` and `src/types/content.ts` are the authoritative source of data structure. To understand which fields a section accepts, read the interface of the corresponding component.
+| Route        | File                                | Sections                                                    |
+| ------------ | ----------------------------------- | ----------------------------------------------------------- |
+| `/`          | `content/pages/home.data.json`      | `hero`, `stats`, `portfolio-preview`, `testimonials`, `cta` |
+| `/about`     | `content/pages/about.data.json`     | `page-header`, `philosophy`, `team`, `timeline`             |
+| `/portfolio` | `content/pages/portfolio.data.json` | `page-header`, `portfolio-gallery`                          |
+| `/services`  | `content/pages/services.data.json`  | `page-header`, `services-list`, `process-steps`, `cta`      |
+| `/contact`   | `content/pages/contact.data.json`   | `page-header`, `contact-section`                            |
+| `/project-*` | `content/pages/project-*.data.json` | `project-detail`, `cta`                                     |
+
+## Project-Specific Content Constraints
+
+- Portfolio categories currently used in preview/gallery/detail flows are:
+  - `residential`
+  - `commercial`
+  - `corporate`
+- The contact page form opens WhatsApp with the filled form values. It does not
+  submit to a backend endpoint.
+- `successMessage` still exists in `contact-section` content for compatibility,
+  but the public UI no longer renders a fake local success state.
+- `site.config.json.theme.*` is runtime configuration, not ordinary copy.
+- `media/manifest.json` is part of content inventory, but should be treated as a
+  controlled asset registry rather than day-to-day copy.
+
+## Documentation Maintenance Rules
+
+Update this file when any of the following changes:
+
+- A new page file is added or removed.
+- A section type is added, removed, renamed, or gains a new collection field.
+- The rendering flow changes between content and the public site.
+- Studio permissions or content ownership boundaries change.

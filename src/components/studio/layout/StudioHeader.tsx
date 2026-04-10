@@ -10,7 +10,7 @@ interface StudioHeaderProps {
 
 export function StudioHeader({ userName, onLogout }: StudioHeaderProps) {
   return (
-    <header className="border-b border-(--st-border-subtle) bg-[rgb(255_255_255_/_0.88)] backdrop-blur-xl">
+    <header className="border-b border-(--st-border-subtle) bg-(--st-bg-elevated) backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <div className="min-w-0">
           <p className="text-sm font-semibold text-(--st-text)">Studio</p>

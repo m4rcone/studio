@@ -1,6 +1,8 @@
 // ─── Section type re-exports (sourced from Zod schemas) ────────────────────────
 // Zod schemas are the single source of truth. Types are inferred via z.infer<>.
 
+export type { SectionType, SectionData } from "@/lib/section-registry";
+
 export type { HeroProps } from "@/lib/studio/schemas/sections/hero.schema";
 export type {
   FeaturesProps,
@@ -49,43 +51,6 @@ export type {
   ContactField,
 } from "@/lib/studio/schemas/sections/contact-section.schema";
 export type { ProjectDetailProps } from "@/lib/studio/schemas/sections/project-detail.schema";
-
-import type { HeroProps } from "@/lib/studio/schemas/sections/hero.schema";
-import type { FeaturesProps } from "@/lib/studio/schemas/sections/features.schema";
-import type { CtaProps } from "@/lib/studio/schemas/sections/cta.schema";
-import type { StatsProps } from "@/lib/studio/schemas/sections/stats.schema";
-import type { PageHeaderProps } from "@/lib/studio/schemas/sections/page-header.schema";
-import type { PortfolioPreviewProps } from "@/lib/studio/schemas/sections/portfolio-preview.schema";
-import type { TestimonialsProps } from "@/lib/studio/schemas/sections/testimonials.schema";
-import type { TeamProps } from "@/lib/studio/schemas/sections/team.schema";
-import type { TimelineProps } from "@/lib/studio/schemas/sections/timeline.schema";
-import type { PhilosophyProps } from "@/lib/studio/schemas/sections/philosophy.schema";
-import type { ServicesListProps } from "@/lib/studio/schemas/sections/services-list.schema";
-import type { ProcessStepsProps } from "@/lib/studio/schemas/sections/process-steps.schema";
-import type { PortfolioGalleryProps } from "@/lib/studio/schemas/sections/portfolio-gallery.schema";
-import type { ContactSectionProps } from "@/lib/studio/schemas/sections/contact-section.schema";
-import type { ProjectDetailProps } from "@/lib/studio/schemas/sections/project-detail.schema";
-
-/**
- * Union of all available section data types.
- * Add new types here when creating new section components.
- */
-export type SectionData =
-  | HeroProps
-  | FeaturesProps
-  | CtaProps
-  | StatsProps
-  | PageHeaderProps
-  | PortfolioPreviewProps
-  | TestimonialsProps
-  | TeamProps
-  | TimelineProps
-  | PhilosophyProps
-  | ServicesListProps
-  | ProcessStepsProps
-  | PortfolioGalleryProps
-  | ContactSectionProps
-  | ProjectDetailProps;
 
 // ─── Shared interfaces (sourced from Zod schemas) ─────────────────────────────
 

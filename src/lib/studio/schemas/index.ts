@@ -1,48 +1,14 @@
-import { z } from "zod";
+import type { z } from "zod";
+import { getSectionSchema as getSharedSectionSchema } from "@/lib/section-registry";
 
 import { siteConfigSchema } from "./site-config.schema";
 import { navigationSchema } from "./navigation.schema";
 import { mediaManifestSchema } from "./media-manifest.schema";
 import { pageDataSchema } from "./page-data.schema";
-
-import { heroSchema } from "./sections/hero.schema";
-import { featuresSchema } from "./sections/features.schema";
-import { ctaSchema } from "./sections/cta.schema";
-import { statsSchema } from "./sections/stats.schema";
-import { pageHeaderSchema } from "./sections/page-header.schema";
-import { portfolioPreviewSchema } from "./sections/portfolio-preview.schema";
-import { testimonialsSchema } from "./sections/testimonials.schema";
-import { teamSchema } from "./sections/team.schema";
-import { timelineSchema } from "./sections/timeline.schema";
-import { philosophySchema } from "./sections/philosophy.schema";
-import { servicesListSchema } from "./sections/services-list.schema";
-import { processStepsSchema } from "./sections/process-steps.schema";
-import { portfolioGallerySchema } from "./sections/portfolio-gallery.schema";
-import { contactSectionSchema } from "./sections/contact-section.schema";
-import { projectDetailSchema } from "./sections/project-detail.schema";
-
 // ─── Section schema registry ──────────────────────────────────────────────────
 
-export const SECTION_SCHEMA_REGISTRY: Record<string, z.ZodType> = {
-  hero: heroSchema,
-  features: featuresSchema,
-  cta: ctaSchema,
-  stats: statsSchema,
-  "page-header": pageHeaderSchema,
-  "portfolio-preview": portfolioPreviewSchema,
-  testimonials: testimonialsSchema,
-  team: teamSchema,
-  timeline: timelineSchema,
-  philosophy: philosophySchema,
-  "services-list": servicesListSchema,
-  "process-steps": processStepsSchema,
-  "portfolio-gallery": portfolioGallerySchema,
-  "contact-section": contactSectionSchema,
-  "project-detail": projectDetailSchema,
-};
-
 export function getSectionSchema(type: string): z.ZodType | null {
-  return SECTION_SCHEMA_REGISTRY[type] ?? null;
+  return getSharedSectionSchema(type);
 }
 
 // ─── File schema registry ─────────────────────────────────────────────────────

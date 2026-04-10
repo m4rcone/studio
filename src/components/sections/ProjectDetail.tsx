@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { AppLink } from "@/components/ui/AppLink";
 import type { ProjectDetailProps } from "@/lib/studio/schemas/sections/project-detail.schema";
 
 export type { ProjectDetailProps } from "@/lib/studio/schemas/sections/project-detail.schema";
@@ -60,12 +60,12 @@ export function ProjectDetail({
             <p className="text-muted-foreground text-lg leading-relaxed">
               {description}
             </p>
-            <Link
+            <AppLink
               href={backHref}
-              className="text-secondary hover:text-foreground mt-10 inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase transition-colors"
+              className="text-secondary hover:text-foreground focus-visible:ring-secondary mt-10 inline-flex items-center gap-2 text-xs tracking-[0.15em] uppercase transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
               ← {backLabel}
-            </Link>
+            </AppLink>
           </div>
         </div>
       </div>

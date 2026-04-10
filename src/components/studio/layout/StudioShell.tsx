@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { StudioHeader } from "./StudioHeader";
 import { useAuth } from "@/hooks/studio/useAuth";
 import { useSession } from "@/hooks/studio/useSession";
+import { usePreviewStatus } from "@/hooks/studio/usePreviewStatus";
 import { useChat, clearChatHistory } from "@/hooks/studio/useChat";
 import { ChatPanel } from "../chat/ChatPanel";
 import { SessionPanel } from "../session/SessionPanel";
@@ -25,6 +26,13 @@ export function StudioShell() {
     startNewSession,
   } = useSession();
   const {
+    bypassConfigured,
+    previewHref,
+    previewPending,
+    previewStatus,
+    markPreviewPending,
+  } = usePreviewStatus(session);
+  const {
     messages,
     isStreaming,
     error,
@@ -35,9 +43,8 @@ export function StudioShell() {
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
   const [pendingAction, setPendingAction] = useState<ConfirmAction>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-  const [previewRefreshNonce, setPreviewRefreshNonce] = useState(0);
-  const [previewPending, setPreviewPending] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileTab>("chat");
+  const previousStreamingRef = useRef(isStreaming);
 
   useEffect(() => {
     if (user && !session && !sessionLoading && !sessionError) {
@@ -46,7 +53,10 @@ export function StudioShell() {
   }, [user, session, sessionLoading, sessionError, restoreOrCreateSession]);
 
   useEffect(() => {
-    if (!isStreaming && session?.id) {
+    const wasStreaming = previousStreamingRef.current;
+    previousStreamingRef.current = isStreaming;
+
+    if (wasStreaming && !isStreaming && session?.id) {
       void refreshSession(session.id);
     }
   }, [isStreaming, session?.id, refreshSession]);
@@ -82,14 +92,9 @@ export function StudioShell() {
 
   const handleProposalApplied = useCallback(() => {
     if (!session?.id) return;
-    setPreviewPending(true);
-    setPreviewRefreshNonce((current) => current + 1);
+    markPreviewPending();
     void refreshSession(session.id);
-  }, [session?.id, refreshSession]);
-
-  const handlePreviewSettled = useCallback(() => {
-    setPreviewPending(false);
-  }, []);
+  }, [markPreviewPending, refreshSession, session?.id]);
 
   if (authLoading) {
     return (
@@ -211,6 +216,13 @@ export function StudioShell() {
               newChatDisabled={
                 isStreaming || Boolean(pendingAction) || !session?.id
               }
+              onPublish={() => setConfirmAction("publish")}
+              onDiscard={() => setConfirmAction("discard")}
+              publishLoading={pendingAction === "publish"}
+              discardLoading={pendingAction === "discard"}
+              publishDisabled={Boolean(pendingAction)}
+              discardDisabled={Boolean(pendingAction)}
+              canPublish={session?.status === "active" && Boolean(session?.prNumber)}
               sessionStatus={session?.status}
             />
           </div>
@@ -221,16 +233,10 @@ export function StudioShell() {
             <SessionPanel
               session={session}
               loading={isBootstrappingSession}
-              previewRefreshNonce={previewRefreshNonce}
+              bypassConfigured={bypassConfigured}
+              previewHref={previewHref}
               previewPending={previewPending}
-              onPreviewSettled={handlePreviewSettled}
-              pendingAction={
-                pendingAction === "publish" || pendingAction === "discard"
-                  ? pendingAction
-                  : null
-              }
-              onApprove={() => setConfirmAction("publish")}
-              onDiscard={() => setConfirmAction("discard")}
+              previewStatus={previewStatus}
             />
           </div>
         </div>

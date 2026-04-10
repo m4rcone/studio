@@ -1,10 +1,18 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { z } from "zod";
 import { getEnv } from "./env";
 import type { AuthPayload } from "./types";
 
 const COOKIE_NAME = "studio-token";
 const TOKEN_EXPIRY = "24h";
+
+const authPayloadSchema = z.object({
+  sub: z.string().min(1),
+  role: z.enum(["client", "team"]),
+  iat: z.number().int(),
+  exp: z.number().int(),
+});
 
 function getSecret() {
   return new TextEncoder().encode(getEnv().AUTH_SECRET);
@@ -56,7 +64,7 @@ export async function verifyAuth(): Promise<AuthPayload> {
   }
 
   const { payload } = await jwtVerify(token, getSecret());
-  return payload as unknown as AuthPayload;
+  return authPayloadSchema.parse(payload);
 }
 
 export function setAuthCookie(token: string): {

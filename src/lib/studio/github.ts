@@ -5,6 +5,16 @@ interface GitHubRequestOptions {
   body?: unknown;
 }
 
+const TREE_CACHE_TTL_MS = 30_000;
+
+interface CacheEntry<T> {
+  value: T;
+  expiresAt: number;
+}
+
+const recursiveFileTreeCache = new Map<string, CacheEntry<string[]>>();
+const directoryListingCache = new Map<string, CacheEntry<string[]>>();
+
 async function githubFetch<T>(
   path: string,
   options: GitHubRequestOptions = {},
@@ -52,21 +62,112 @@ export async function readFile(
   return { content, sha: data.sha };
 }
 
-interface GitHubDirEntry {
-  name: string;
-  path: string;
-  type: "file" | "dir";
-}
-
 export async function listFiles(
   directory: string,
   branch?: string,
 ): Promise<string[]> {
   const ref = branch ?? getEnv().GITHUB_DEFAULT_BRANCH;
-  const entries = await githubFetch<GitHubDirEntry[]>(
-    `/contents/${directory}?ref=${encodeURIComponent(ref)}`,
+  const normalizedDirectory = normalizeDirectory(directory);
+  const cacheKey = `${ref}::${normalizedDirectory}`;
+  const cachedListing = getCachedValue(directoryListingCache, cacheKey);
+  if (cachedListing) {
+    return cachedListing;
+  }
+
+  const allFiles = await getRecursiveFilesForRef(ref);
+  const filtered = filterFilesByDirectory(allFiles, normalizedDirectory);
+  setCachedValue(directoryListingCache, cacheKey, filtered);
+  return filtered;
+}
+
+interface GitHubCommitDetails {
+  commit: {
+    tree: {
+      sha: string;
+    };
+  };
+}
+
+interface GitHubTreeEntry {
+  path: string;
+  type: "blob" | "tree" | "commit";
+}
+
+interface GitHubRecursiveTree {
+  tree: GitHubTreeEntry[];
+}
+
+async function getRecursiveFilesForRef(ref: string): Promise<string[]> {
+  const cachedTree = getCachedValue(recursiveFileTreeCache, ref);
+  if (cachedTree) {
+    return cachedTree;
+  }
+
+  const commit = await githubFetch<GitHubCommitDetails>(
+    `/commits/${encodeURIComponent(ref)}`,
   );
-  return entries.filter((e) => e.type === "file").map((e) => e.path);
+  const tree = await githubFetch<GitHubRecursiveTree>(
+    `/git/trees/${commit.commit.tree.sha}?recursive=1`,
+  );
+
+  const files = tree.tree
+    .filter((entry) => entry.type === "blob")
+    .map((entry) => entry.path)
+    .sort();
+
+  setCachedValue(recursiveFileTreeCache, ref, files);
+  return files;
+}
+
+function filterFilesByDirectory(files: string[], directory: string): string[] {
+  if (!directory) {
+    return files;
+  }
+
+  if (files.includes(directory)) {
+    return [directory];
+  }
+
+  const prefix = `${directory}/`;
+  return files.filter((filePath) => filePath.startsWith(prefix));
+}
+
+function normalizeDirectory(directory: string): string {
+  return directory.replace(/^\/+|\/+$/g, "");
+}
+
+function getCachedValue<T>(
+  cache: Map<string, CacheEntry<T>>,
+  key: string,
+): T | null {
+  const entry = cache.get(key);
+  if (!entry) return null;
+  if (entry.expiresAt <= Date.now()) {
+    cache.delete(key);
+    return null;
+  }
+  return entry.value;
+}
+
+function setCachedValue<T>(
+  cache: Map<string, CacheEntry<T>>,
+  key: string,
+  value: T,
+): void {
+  cache.set(key, {
+    value,
+    expiresAt: Date.now() + TREE_CACHE_TTL_MS,
+  });
+}
+
+function invalidateTreeCaches(ref: string): void {
+  recursiveFileTreeCache.delete(ref);
+
+  for (const key of directoryListingCache.keys()) {
+    if (key === ref || key.startsWith(`${ref}::`)) {
+      directoryListingCache.delete(key);
+    }
+  }
 }
 
 // ─── Branch operations ────────────────────────────────────────────────────────
@@ -89,10 +190,12 @@ export async function createBranch(
     method: "POST",
     body: { ref: `refs/heads/${name}`, sha: fromSha },
   });
+  invalidateTreeCaches(name);
 }
 
 export async function deleteBranch(name: string): Promise<void> {
   await githubFetch(`/git/refs/heads/${name}`, { method: "DELETE" });
+  invalidateTreeCaches(name);
 }
 
 // ─── Commits (Git Trees API for multi-file atomic commits) ────────────────────
@@ -153,6 +256,8 @@ export async function createMultiFileCommit(
     body: { sha: newCommit.sha },
   });
 
+  invalidateTreeCaches(branch);
+
   return newCommit.sha;
 }
 
@@ -187,6 +292,7 @@ export async function mergePullRequest(prNumber: number): Promise<void> {
     method: "PUT",
     body: { merge_method: "squash" },
   });
+  invalidateTreeCaches(getEnv().GITHUB_DEFAULT_BRANCH);
 }
 
 export async function closePullRequest(prNumber: number): Promise<void> {

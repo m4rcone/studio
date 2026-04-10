@@ -29,7 +29,7 @@ export const contactSectionSchema = z.object({
   submitLabel: withMeta(z.string().min(1).max(30), {
     label: "Label do botão enviar",
   }),
-  successMessage: withMeta(z.string().min(1).max(200), {
+  successMessage: withMeta(z.string().min(1).max(200).optional(), {
     label: "Mensagem de sucesso",
   }),
 });

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
+import { AppLink } from "@/components/ui/AppLink";
 import type { HeroProps } from "@/lib/studio/schemas/sections/hero.schema";
 
 export type { HeroProps } from "@/lib/studio/schemas/sections/hero.schema";
@@ -32,12 +33,12 @@ export function Hero({
               style={cta.style ?? "primary"}
             />
             {secondaryCta && (
-              <a
+              <AppLink
                 href={secondaryCta.href}
-                className="text-foreground hover:text-secondary inline-flex items-center pt-3 text-sm underline underline-offset-4 transition-colors sm:pt-0"
+                className="text-foreground hover:text-secondary focus-visible:ring-secondary inline-flex items-center pt-3 text-sm underline underline-offset-4 transition-colors focus-visible:ring-2 focus-visible:outline-none sm:pt-0"
               >
                 {secondaryCta.label}
-              </a>
+              </AppLink>
             )}
           </div>
         </div>

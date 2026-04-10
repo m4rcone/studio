@@ -10,6 +10,7 @@ export interface ContentProvider {
     commitMessage: string,
     branch: string,
   ): Promise<{ sha: string }>;
+  // listFiles always returns files recursively from the given directory.
   listFiles(directory: string, branch?: string): Promise<string[]>;
   readTextFile(path: string): Promise<string>;
 }

@@ -1,24 +1,5 @@
 import type { z } from "zod";
-import {
-  contactFieldSchema,
-  featuresItemSchema,
-  galleryProjectSchema,
-  philosophyValueSchema,
-  portfolioPreviewItemSchema,
-  processStepSchema,
-  serviceItemSchema,
-  statItemSchema,
-  teamMemberSchema,
-  testimonialItemSchema,
-  timelineEventSchema,
-} from "./schemas";
-
-interface CollectionSchemaHint {
-  path: string;
-  description: string;
-  minItems: number;
-  itemSchema: z.ZodType;
-}
+import { SECTION_COLLECTION_HINTS } from "@/lib/section-registry";
 
 const SCALAR_PATH_HINTS = [
   "site.config.json → contact.phone is a single string field, not an array",
@@ -26,78 +7,9 @@ const SCALAR_PATH_HINTS = [
   "site.config.json → contact.email is a single string field",
 ];
 
-const COLLECTION_HINTS: CollectionSchemaHint[] = [
-  {
-    path: "pages/* → sections[id=office-stats].data.items",
-    description: "Stats cards",
-    minItems: 1,
-    itemSchema: statItemSchema,
-  },
-  {
-    path: "pages/* → sections[id=featured-portfolio].data.items",
-    description: "Portfolio preview items",
-    minItems: 1,
-    itemSchema: portfolioPreviewItemSchema,
-  },
-  {
-    path: "pages/* → sections[id=client-testimonials].data.items",
-    description: "Testimonials",
-    minItems: 1,
-    itemSchema: testimonialItemSchema,
-  },
-  {
-    path: "pages/* → sections[id=founding-partners].data.members",
-    description: "Team members",
-    minItems: 1,
-    itemSchema: teamMemberSchema,
-  },
-  {
-    path: "pages/* → sections[id=studio-history].data.events",
-    description: "Timeline events",
-    minItems: 1,
-    itemSchema: timelineEventSchema,
-  },
-  {
-    path: "pages/* → sections[id=core-values].data.values",
-    description: "Philosophy values",
-    minItems: 1,
-    itemSchema: philosophyValueSchema,
-  },
-  {
-    path: "pages/* → sections[id=services-list].data.items",
-    description: "Services list items",
-    minItems: 1,
-    itemSchema: serviceItemSchema,
-  },
-  {
-    path: "pages/* → sections[id=process-steps].data.steps",
-    description: "Process steps",
-    minItems: 1,
-    itemSchema: processStepSchema,
-  },
-  {
-    path: "pages/* → sections[id=projects-gallery].data.projects",
-    description: "Portfolio gallery projects",
-    minItems: 1,
-    itemSchema: galleryProjectSchema,
-  },
-  {
-    path: "pages/* → sections[id=contact-section].data.fields",
-    description: "Contact form fields",
-    minItems: 1,
-    itemSchema: contactFieldSchema,
-  },
-  {
-    path: "pages/* → sections[id=features].data.items",
-    description: "Feature cards",
-    minItems: 1,
-    itemSchema: featuresItemSchema,
-  },
-];
-
 export function buildSchemaCatalogPrompt(): string {
   const scalarLines = SCALAR_PATH_HINTS.map((hint) => `- ${hint}`).join("\n");
-  const collectionLines = COLLECTION_HINTS.map((hint) =>
+  const collectionLines = SECTION_COLLECTION_HINTS.map((hint) =>
     formatCollectionHint(hint),
   ).join("\n");
 
@@ -113,13 +25,21 @@ export function buildSchemaCatalogPrompt(): string {
     scalarLines,
     "",
     "### Collection item shapes",
+    "Use the real section id from the page JSON when building an operation path.",
     collectionLines,
   ].join("\n");
 }
 
-function formatCollectionHint(hint: CollectionSchemaHint): string {
+function formatCollectionHint(hint: {
+  sectionType: string;
+  field: string;
+  description: string;
+  minItems: number;
+  itemSchema: z.ZodType;
+}): string {
   return [
-    `- ${hint.path} (${hint.description}, minItems: ${hint.minItems})`,
+    `- section type "${hint.sectionType}" → data.${hint.field} (${hint.description}, minItems: ${hint.minItems})`,
+    `  Path pattern: sections[id=<actual-id>].data.${hint.field}`,
     `  Item shape: ${describeSchemaShape(hint.itemSchema)}`,
   ].join("\n");
 }

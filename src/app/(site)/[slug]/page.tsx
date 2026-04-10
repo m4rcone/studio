@@ -1,5 +1,5 @@
 import { getPageData, getAllPages } from "@/lib/content";
-import { getSectionComponent } from "@/lib/section-registry";
+import { SectionsRenderer } from "@/components/sections/SectionsRenderer";
 import type { Metadata } from "next";
 
 interface Props {
@@ -24,12 +24,5 @@ export default async function SlugPage({ params }: Props) {
   const { slug } = await params;
   const page = await getPageData(slug);
 
-  return (
-    <>
-      {page.sections.map((section) => {
-        const Section = getSectionComponent(section.type);
-        return <Section key={section.id} {...section.data} />;
-      })}
-    </>
-  );
+  return <SectionsRenderer sections={page.sections} />;
 }

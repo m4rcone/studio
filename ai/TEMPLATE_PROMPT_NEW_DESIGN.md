@@ -1,218 +1,156 @@
-# Template Prompt — Create a New Client Site
+# Template Prompt — Create or Extend a Studio Site
 
-Use this document as the prompt when starting a new client site with this content-driven architecture. Copy it, fill in the briefing, and give it to Claude Code.
+Use this prompt when creating a new Studio-backed site, adding a new page, or
+introducing new reusable sections inside this repository structure.
 
 ---
 
-# Task: Create a Complete Site for a New Client
+# Task: Build or Extend a Complete Client Site with Studio Support
 
-## Client Briefing
+## Briefing
 
-**Business type:** [e.g. Architecture studio, law firm, clinic, restaurant, e-commerce]
+**Business type:** [e.g. architecture studio, clinic, consultancy, restaurant]
 
 **Company name:** [Name]
 
 **Tagline:** [Short brand statement]
 
-**Pages:**
+**Pages to create or update:**
 
-- [Page 1: description of sections and content]
-- [Page 2: ...]
-- [...]
+- [Page slug + intent]
+- [Page slug + intent]
 
-**Services/Products:**
+**Primary CTA:** [quote request, WhatsApp, booking, consultation, etc.]
+
+**Services / products / offers:**
 
 - [Item 1]
 - [Item 2]
-- [...]
 
-**Tone of voice:** [e.g. Sophisticated and contemporary / Friendly and approachable / Corporate and authoritative]
+**Tone of voice:** [e.g. premium and calm, warm and approachable, corporate]
 
-**Visual references:** [Describe aesthetic: spacing, typography style, layout feel, imagery style]
+**Visual direction:** [layout feel, spacing, references, imagery style]
 
 **Color palette:**
 
-- Primary: #xxxxxx (description)
-- Secondary: #xxxxxx (description)
-- General style: [light/dark, accent usage]
+- Primary: #xxxxxx
+- Secondary: #xxxxxx
+- Background: #xxxxxx
 
 **Fonts:**
 
-- Heading: [Google Font name] (reason)
-- Body: [Google Font name] (reason)
+- Heading: [Google Font]
+- Body: [Google Font]
 
 **Contact info:**
 
-- Phone: [number]
-- WhatsApp: [international format, e.g. 5511987654321]
-- Email: [email]
-- Address: [full address]
+- Phone:
+- WhatsApp:
+- Email:
+- Address:
 
-**Social media:**
+**Social links:**
 
-- Instagram: [URL or null]
-- Facebook: [URL or null]
-- LinkedIn: [URL or null]
+- Instagram:
+- Facebook:
+- LinkedIn:
 
-**Additional notes:** [Target audience, main CTA, differentiators, anything else relevant]
+**Additional notes:** [audience, differentiators, constraints]
 
 ---
 
 ## Instructions
 
-Read the CLAUDE.md at the project root to understand the architecture and all conventions.
+Read `CLAUDE.md` first.
 
-Based on the briefing above, build the complete site following this workflow:
+Important documentation rule:
 
-### 1. Client Data
+- `CLAUDE.md` is a shared Studio document and should stay generic across Studio
+  repositories.
+- Whenever you create or update a page template, add a new page, add a new
+  section type, or change content conventions, you must also update:
+  - `ai/CONVENTIONS.md`
+  - `ai/EDITING_GUIDE.md`
 
-Replace all placeholder data in `content/site.config.json` with briefing information: brand, colors, contact, social media, SEO. For fonts, pick from Google Fonts something that matches the described tone of voice.
+Do not leave those docs stale after scaffolding a new design.
 
-After saving, run `npm run generate-theme` to regenerate `src/app/theme.generated.css`.
+### 1. Update global site data
 
-Update `src/app/layout.tsx` to import the chosen fonts from `next/font/google` and expose them as CSS variables `--font-heading` and `--font-body`. Apply them in `src/app/globals.css` via `@layer base`.
+- Fill `content/site.config.json` with the client brand, theme tokens, contact,
+  social links, and default SEO.
+- Run `npm run generate-theme`.
+- Update `src/app/layout.tsx` font imports if the chosen fonts change.
 
-### 2. Navigation
+### 2. Update navigation
 
-Update `content/navigation.json` with the pages from the briefing. The header CTA should direct to the business's primary action (schedule, quote request, WhatsApp, etc.).
+- Reflect the requested pages in `content/navigation.json`.
+- Make the header CTA match the primary conversion goal.
 
-### 3. SVG Placeholder Images
+### 3. Create media placeholders first
 
-**Before building components or writing JSON content**, create SVG placeholder files in `public/media/` for every image the site will need.
+- Create placeholder assets in `public/media/` before writing JSON that points
+  to them.
+- Update `content/media/manifest.json` for every new asset.
 
-Placeholder SVGs should:
+### 4. Build or extend sections through the shared registry
 
-- Use the client's color palette (muted background, accent color for lines/labels)
-- Show a centered icon (camera frame for photos, person silhouette for portraits)
-- Display a descriptive label of what the final image should be
-- Show "PLACEHOLDER · [STUDIO/CLIENT NAME]" in small uppercase at the bottom
-- Have correct aspect ratios for their intended use:
-  - Hero images: tall portrait (e.g. 800×1000) for split layouts
-  - Project/feature images: landscape (e.g. 800×600, aspect 4:3)
-  - Team portraits: portrait (e.g. 600×800, aspect 3:4)
-  - Logo: transparent background wordmark SVG
+When you add a new section type:
 
-Name files descriptively in kebab-case:
+1. Create the Zod schema in `src/lib/studio/schemas/sections/`.
+2. Create the React section component in `src/components/sections/`.
+3. Register the section in `src/lib/section-registry.ts`.
+4. Ensure the Studio can infer collection metadata from that same registry.
 
-- `atlas-logo.svg`
-- `hero-main-project.svg`
-- `project-higienopolis-house.svg`
-- `team-ana-beatriz.svg`
+Do not create parallel registries or duplicate section mappings elsewhere.
 
-Update all JSON content files to reference these `.svg` paths (instead of `.webp` which don't exist yet). Real images will replace the SVGs later — keeping the same filenames avoids needing to update the JSON.
+### 5. Populate page content
 
-Also update `content/media/manifest.json` with entries for each placeholder.
+- Create or update `content/pages/*.data.json`.
+- Use real structure and realistic short copy.
+- Keep long descriptive text concise unless the briefing explicitly asks for
+  dense editorial content.
+- Preserve responsive image usage and valid alt text.
 
-### 4. Section Components
+### 6. Keep the public UX intentional and simple
 
-Create visual components in `src/components/sections/`. Each component:
+- Avoid over-engineering component APIs.
+- Prefer a few reusable primitives over a large component framework.
+- Make cards readable on mobile and keyboard, not only on hover.
+- Keep form behavior real. If a contact flow is front-end only, wire it to the
+  actual destination instead of creating a fake success state.
 
-- Must have **unique and original design** — this is a custom site, not a generic template
-- Receives all data via typed props with an exported interface
-- Has descriptive JSDoc comments in **English** on every interface field
-- Uses theme CSS variables (bg-primary, text-secondary, bg-muted, etc.)
-- Is fully responsive (mobile-first)
-- Has zero hardcoded text — all content comes from props
+### 7. Update repository documentation
 
-For the design, consider the tone of voice and visual references from the briefing:
+After any new page/template/design work:
 
-- Premium business → generous whitespace, elegant typography, subtle animations
-- Friendly/casual → more vibrant colors, dynamic layouts, playful elements
-- Corporate → structured layout, clean grid, professional visuals
+- Update `ai/CONVENTIONS.md`
+  - page inventory
+  - section catalog
+  - project-specific constraints
+- Update `ai/EDITING_GUIDE.md`
+  - edit locations
+  - allowed collections
+  - workflow changes
+  - validation expectations
 
-Choose section types that make sense for this business and the pages in the briefing. Examples:
+If you add a new reusable section or change the Studio architecture in a way
+that should apply across repositories, update `CLAUDE.md` only if the change is
+meant to be shared globally.
 
-| Type                | Description                        |
-| ------------------- | ---------------------------------- |
-| `hero`              | Page hero with text + image        |
-| `stats`             | Key numbers in a bold strip        |
-| `page-header`       | Simple inner-page banner           |
-| `portfolio-preview` | Featured project grid              |
-| `portfolio-gallery` | Filterable full gallery            |
-| `features`          | Feature/service cards grid         |
-| `services-list`     | Numbered service list with details |
-| `process-steps`     | Step-by-step workflow              |
-| `testimonials`      | Client quote cards                 |
-| `team`              | Team member profiles               |
-| `timeline`          | Milestone history                  |
-| `contact-section`   | Form + contact info + WhatsApp     |
-| `cta`               | Conversion banner                  |
-| `faq`               | Accordion FAQ                      |
-| `pricing`           | Pricing tiers                      |
-| `video-section`     | Embed video with text              |
+### 8. Validate
 
-### 5. Layout Components
+- Run `npm run lint`
+- Run `npm run build`
+- Check the affected public routes
+- Check the Studio flow if your changes touched schemas, permissions, or content
+  editing behavior
 
-Create or update Header and Footer in `src/components/layout/`:
+## Output Expectations
 
-- Header: logo, responsive navigation (hamburger on mobile), CTA button
-- Footer: links, contact info, social media, copyright
-- Same rules: zero hardcoded text, data from navigation.json and site.config.json
-- Design coherent with the sections created
+The final result should:
 
-### 6. Base UI Components
-
-Create in `src/components/ui/` only what the sections actually need (Button, Card, etc.). Keep it lean.
-
-### 7. Page Content
-
-Populate `content/pages/[slug].data.json` for each page in the briefing.
-
-Use **lorem ipsum** for long paragraphs and descriptions, but use **realistic text** for:
-
-- Titles and headlines (should sound like the real business)
-- Button and CTA labels
-- Service/product names
-- Navigation items
-- Stats and numbers
-
-Each page should have 3–6 sections, organized in a logical flow.
-
-Use the SVG placeholder paths created in step 3 for all image references.
-
-### 8. Registry & Typing
-
-- Register all new sections in `src/lib/section-registry.ts`
-- Add re-export of each section interface in `src/types/content.ts`
-- Add each type to the `SectionData` union
-
-### 9. Routes
-
-Ensure all pages from the briefing work:
-
-- Home renders at `/` via `src/app/page.tsx`
-- Other pages render via `src/app/[slug]/page.tsx`
-- `generateStaticParams` includes all slugs
-- Meta tags (title, description) come from each page's JSON
-
-### 10. AI Documentation
-
-Update `ai/CONVENTIONS.md`:
-
-- Fill in the "Available section types" table with all sections created
-- Each entry: type, component path, short description, required props
-
-Update `ai/EDITING_GUIDE.md`:
-
-- Fill "Site-specific notes" with client details and content rules
-- List all existing pages with their sections
-- Note any hardcoded constraints (e.g. fixed category values in filters)
-
-### 11. Validation
-
-Run `npm run build` and confirm the build passes without errors.
-Confirm all pages render in `npm run dev`.
-
----
-
-## Design Quality
-
-The design should look like a real professional site, not a generic template:
-
-- Use transitions and hover states on interactive elements
-- Apply generous spacing between sections (py-24 or more)
-- Ensure adequate contrast between text and background in all color combinations
-- Icons: use inline SVGs or lucide-react if already in the project
-- Images: use next/image with `sizes` and `priority` where appropriate
-- Typography: clear hierarchy (h1 > h2 > h3 > body > small)
-- All content in the target language — no mixed languages in the final output
+- Feel like a custom site, not a generic template
+- Keep the content-driven architecture intact
+- Keep the Studio workflow compatible with the new content structure
+- Leave `ai/CONVENTIONS.md` and `ai/EDITING_GUIDE.md` up to date in the same
+  change

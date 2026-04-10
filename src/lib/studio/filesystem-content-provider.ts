@@ -34,14 +34,33 @@ export class FilesystemContentProvider implements ContentProvider {
 
   async listFiles(directory: string): Promise<string[]> {
     const fullPath = this.resolve(directory);
-    if (!existsSync(fullPath)) return [];
-    const entries = await readdir(fullPath, { withFileTypes: true });
-    return entries
-      .filter((e) => e.isFile())
-      .map((e) => path.join(directory, e.name));
+    return listFilesRecursive(fullPath, directory);
   }
 
   async readTextFile(filePath: string): Promise<string> {
     return this.readFile(filePath);
   }
+}
+
+async function listFilesRecursive(
+  fullPath: string,
+  relativePath: string,
+): Promise<string[]> {
+  if (!existsSync(fullPath)) return [];
+
+  const entries = await readdir(fullPath, { withFileTypes: true });
+  const files = await Promise.all(
+    entries.map(async (entry) => {
+      const nextFullPath = path.join(fullPath, entry.name);
+      const nextRelativePath = path.join(relativePath, entry.name);
+
+      if (entry.isDirectory()) {
+        return listFilesRecursive(nextFullPath, nextRelativePath);
+      }
+
+      return [nextRelativePath];
+    }),
+  );
+
+  return files.flat().sort();
 }

@@ -22,7 +22,7 @@ export const StudioInput = forwardRef<HTMLInputElement, StudioInputProps>(
         <input
           ref={ref}
           id={id}
-          className={`st-focus-ring rounded-(--st-radius) border border-(--st-border) bg-(--st-bg-input) px-4 py-3 text-sm text-(--st-text) shadow-[inset_0_1px_0_rgb(255_255_255_/_0.7)] transition-[border-color,box-shadow,background-color] placeholder:text-(--st-text-muted) ${error ? "border-(--st-danger)" : "focus:border-(--st-border-strong) focus:bg-white focus:shadow-[0_0_0_4px_var(--st-focus-soft)]"} ${className}`}
+          className={`st-focus-ring rounded-(--st-radius) border border-(--st-border) bg-(--st-bg-input) px-4 py-3 text-sm text-(--st-text) shadow-[inset_0_1px_0_rgb(255_255_255_/_0.7)] transition-[border-color,box-shadow,background-color] placeholder:text-(--st-text-muted) ${error ? "border-(--st-danger)" : "focus:border-(--st-border-strong) focus:bg-(--st-bg-surface) focus:shadow-[0_0_0_4px_var(--st-focus-soft)]"} ${className}`}
           {...props}
         />
         {error && (

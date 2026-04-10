@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { AppLink } from "./AppLink";
 
 export type ButtonStyle = "primary" | "secondary" | "whatsapp" | "outline";
 
@@ -32,18 +32,14 @@ export function Button({
   const classes = `${base} ${BUTTON_STYLES[style]} ${className}`;
 
   if (href) {
-    const isExternal =
-      external || href.startsWith("http") || href.startsWith("https");
     return (
-      <Link
+      <AppLink
         href={href}
         className={classes}
-        {...(isExternal
-          ? { target: "_blank", rel: "noopener noreferrer" }
-          : {})}
+        target={external ? "_blank" : undefined}
       >
         {label}
-      </Link>
+      </AppLink>
     );
   }
 

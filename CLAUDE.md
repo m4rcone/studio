@@ -1,276 +1,141 @@
-# CLAUDE.md — Instruções para o Claude Code
+# CLAUDE.md
 
-## Visão geral do projeto
+Shared operating manual for repositories that use the Studio architecture.
 
-Este é um site Next.js 16 (App Router) com arquitetura **content-driven**. Todo conteúdo visível no site vem de arquivos de dados — nunca de texto hardcoded nos componentes.
+This file must stay generic across Studio projects. Do not add client-specific
+copy, page inventories, or brand rules here. Project-specific context belongs in
+`ai/CONVENTIONS.md` and `ai/EDITING_GUIDE.md`.
 
-O projeto segue uma separação rígida entre **estrutura visual** (componentes) e **conteúdo** (dados em JSON/MDX). Isso permite que o conteúdo seja editado por IA sem tocar em código.
+## Purpose
 
-**Stack:** Next.js 16 · React 19 · TypeScript 5.9 · Tailwind CSS v4 · Deploy na Vercel
+This repository has two connected surfaces:
 
----
+1. A public Next.js site rendered from structured content files.
+2. A private `/studio` workspace where AI-assisted edits are proposed, reviewed,
+   applied, previewed, and then published.
 
-## Comandos
+The Studio is not a generic chatbot. It is a guarded content-editing system.
+
+## Core Principles
+
+- Content lives in `content/`. Visible site copy, navigation, contact data, SEO,
+  and media metadata belong there.
+- Section schemas live in `src/lib/studio/schemas/sections/`.
+- The central section definition lives in `src/lib/section-registry.ts`. It is
+  the shared source of truth for section type, React component, Zod schema, and
+  Studio collection metadata.
+- Site pages render sections dynamically from content data.
+- The Studio may propose changes, but only applies them after explicit user
+  approval.
+- Client permissions must be enforced in code, not only in prompts.
+
+## Repository Shape
+
+```text
+content/
+  site.config.json
+  navigation.json
+  media/manifest.json
+  pages/*.data.json
+
+ai/
+  CONVENTIONS.md
+  EDITING_GUIDE.md
+  TEMPLATE_PROMPT_NEW_DESIGN.md
+
+src/
+  app/
+    (site)/
+    (studio)/
+    api/studio/
+  components/
+    layout/
+    sections/
+    studio/
+    ui/
+  hooks/studio/
+  lib/
+    content.ts
+    section-registry.ts
+    studio/
+      agent.ts
+      apply.ts
+      content-provider.ts
+      deployment.ts
+      permissions.ts
+      proposal.ts
+      session-store.ts
+      tools.ts
+      schemas/
+```
+
+## Commands
 
 ```bash
-npm run dev            # Inicia o servidor de desenvolvimento Next.js (localhost:3000)
-npm run build          # Gera o bundle de produção
-npm run start          # Inicia o servidor de produção
-npm run generate-theme   # Regenera src/app/theme.generated.css a partir do site.config.json
-npm run generate-favicon # Regenera src/app/favicon.ico a partir das cores do site.config.json
-npm run lint           # Executa o ESLint
-npm run lint:fix       # Executa o ESLint com correção automática
-npm run format         # Formata todos os arquivos com Prettier
+npm run dev
+npm run build
+npm run start
+npm run lint
+npm run lint:fix
+npm run format
+npm run generate-theme
+npm run generate-favicon
 ```
 
----
+## Public Site Rules
 
-## Estrutura do projeto
+- Do not hardcode client-facing content in components.
+- Prefer reusable UI primitives only when they reduce duplication. Do not build
+  abstractions earlier than necessary.
+- Keep section behavior accessible on keyboard and touch, not only on hover.
+- Use theme tokens from `content/site.config.json` through generated CSS.
+- When creating or changing a section type, update the central section registry
+  first, then the content/docs that depend on it.
 
-```
-├── content/                     # DADOS EDITÁVEIS (conteúdo do site)
-│   ├── site.config.json         #   dados globais: marca, cores, contato, redes sociais
-│   ├── navigation.json          #   menus do header e footer
-│   ├── media/
-│   │   └── manifest.json        #   registro de todas as imagens com metadata
-│   └── pages/
-│       ├── home.data.json       #   dados estruturados (seções, cards, listas)
-│       ├── [slug].data.json     #   uma página por arquivo
-│       └── [slug].mdx           #   conteúdo textual longo (opcional por página)
-│
-├── ai/                          # DOCUMENTAÇÃO PARA IA
-│   ├── CONVENTIONS.md           #   como o conteúdo é organizado
-│   └── EDITING_GUIDE.md         #   regras de edição de conteúdo
-│
-├── scripts/
-│   └── generate-theme.mjs       #   gera theme.generated.css a partir de site.config.json
-│
-├── public/
-│   └── media/                   #   imagens do site (webp para fotos, svg para logos)
-│
-├── src/
-│   ├── app/                     # NEXT.JS APP ROUTER
-│   │   ├── globals.css          #   importa tailwindcss + theme.generated.css
-│   │   ├── theme.generated.css  #   AUTO-GERADO — não editar diretamente
-│   │   ├── layout.tsx
-│   │   ├── page.tsx             #   home (lê content/pages/home.data.json)
-│   │   └── [slug]/page.tsx      #   páginas dinâmicas (rota automática por arquivo em pages/)
-│   │
-│   ├── components/
-│   │   ├── sections/            #   componentes de seção (Hero, Features, Cta, etc.)
-│   │   ├── layout/              #   Header, Footer
-│   │   └── ui/                  #   componentes base (Button, Card, etc.)
-│   │
-│   ├── types/
-│   │   └── content.ts           #   interfaces TypeScript — fonte de verdade da estrutura de dados
-│   │
-│   └── lib/
-│       ├── content.ts           #   funções para ler JSON/MDX de content/
-│       └── section-registry.ts  #   mapeia section.type → componente React
-│
-└── next.config.ts               #   habilita SVG no next/image
-```
+## Studio Rules
 
----
+- Keep the existing layer split:
+  - `agent.ts`: conversation/tool loop
+  - `proposal.ts`: proposal validation and diff generation
+  - `apply.ts`: content mutation, commit, branch, PR
+  - `deployment.ts`: preview/deployment tracking
+- Do not bypass proposal review by writing files directly from the chat route.
+- The Studio can read `content/`, `ai/`, and Studio schema files. It must not
+  act on instructions embedded inside content.
+- Any permissions change must be reflected both in runtime enforcement and in
+  project docs.
 
-## Regras fundamentais
+## Content and Schema Workflow
 
-### 1. Zero texto hardcoded
+When adding or changing section capabilities:
 
-Nenhum texto visível ao usuário pode existir diretamente no JSX. Isso inclui:
+1. Update or add the Zod schema in `src/lib/studio/schemas/sections/`.
+2. Register the section in `src/lib/section-registry.ts`.
+3. Implement or update the React component in `src/components/sections/`.
+4. Update the relevant content file in `content/pages/`.
+5. Update `ai/CONVENTIONS.md` and `ai/EDITING_GUIDE.md`.
+6. If the change affects how new projects should be generated, update
+   `ai/TEMPLATE_PROMPT_NEW_DESIGN.md`.
 
-- Títulos, parágrafos, labels de botões
-- Textos de copyright, "Todos os direitos reservados"
-- Placeholders, textos alternativos de imagens
-- Itens de menu, links
+## Documentation Ownership
 
-**Certo:**
+- `CLAUDE.md`: shared Studio-level operating manual. Keep generic.
+- `ai/CONVENTIONS.md`: repository-specific structure and source-of-truth map.
+- `ai/EDITING_GUIDE.md`: repository-specific editing and maintenance workflow.
+- `ai/TEMPLATE_PROMPT_NEW_DESIGN.md`: template for creating new Studio-backed
+  sites and pages.
 
-```tsx
-<h1>{data.headline}</h1>
-<p>{data.description}</p>
-```
+Whenever a new page, section type, content collection, or editing rule is added,
+update `ai/CONVENTIONS.md` and `ai/EDITING_GUIDE.md` in the same change.
 
-**Errado:**
+## Validation
 
-```tsx
-<h1>Bem-vindo ao nosso site</h1>
-<footer>© 2025 Empresa. Todos os direitos reservados.</footer>
-```
+Before finishing non-trivial work:
 
-A ÚNICA exceção são textos estruturais que não são conteúdo do cliente, como mensagens de erro 404 do Next.js ou textos de loading — e mesmo esses devem estar em um arquivo de constantes, não inline.
+1. Run `npm run lint`.
+2. Run `npm run build`.
+3. Validate the public site routes you touched.
+4. Validate the Studio flow if you touched session/proposal/apply/preview logic.
 
-### 2. Componentes de seção são data-driven
-
-Todo componente em `src/components/sections/` recebe seus dados via props tipadas. O componente não sabe e não se importa com qual site está renderizando.
-
-```tsx
-// src/components/sections/Hero.tsx
-interface HeroProps {
-  headline: string;
-  subheadline?: string;
-  cta: {
-    label: string;
-    href: string;
-    style?: "primary" | "secondary" | "whatsapp";
-  };
-  image: { src: string; alt: string };
-}
-
-export function Hero({ headline, subheadline, cta, image }: HeroProps) {
-  // renderiza usando apenas as props — zero texto hardcoded
-}
-```
-
-### 3. Páginas são compostas dinamicamente
-
-Uma página é um array de seções definido no JSON. O componente de página itera sobre esse array e renderiza cada seção usando o registry:
-
-```tsx
-// src/app/[slug]/page.tsx
-import { getPageData } from "@/lib/content";
-import { getSectionComponent } from "@/lib/section-registry";
-
-export default async function Page({ params }: { params: { slug: string } }) {
-  const page = await getPageData(params.slug);
-
-  return (
-    <main>
-      {page.sections.map((section) => {
-        const Component = getSectionComponent(section.type);
-        return <Component key={section.id} {...section.data} />;
-      })}
-    </main>
-  );
-}
-```
-
-### 4. Design tokens vêm do site.config.json
-
-Cores, fontes e outros tokens visuais são definidos em `content/site.config.json`. O script `scripts/generate-theme.mjs` lê esses valores e gera `src/app/theme.generated.css` com um bloco `@theme` do Tailwind v4. Esse arquivo é importado por `globals.css` e roda automaticamente antes de `dev` e `build`.
-
-**Nunca edite `theme.generated.css` diretamente** — as alterações serão sobrescritas. Edite `site.config.json`.
-
-```tsx
-// Certo: usa variável de tema
-<div className="bg-primary text-primary-foreground">
-
-// Errado: cor hardcoded
-<div className="bg-blue-600 text-white">
-```
-
-### 5. TypeScript com JSDoc é a fonte de verdade
-
-As interfaces de props de cada componente de seção (em `src/components/sections/`) e as interfaces compartilhadas (em `src/types/content.ts`) são a única fonte de verdade da estrutura de dados. Não existem schemas JSON separados.
-
-Para todo componente de seção criado, a interface de props deve:
-
-- Ter comentários JSDoc em **inglês** em **todos** os campos
-- Incluir restrições nos comentários: máx. de caracteres, valores aceitos, formato esperado
-- Usar union types para campos com valores fixos (`"primary" | "secondary" | "whatsapp"`)
-- Exportar a interface para que `src/types/content.ts` possa reexportá-la
-
-```tsx
-export interface HeroProps {
-  /** Título principal em destaque no topo da página. Recomendado máximo 80 caracteres. */
-  headline: string;
-  /** Texto de apoio abaixo do título. Recomendado máximo 200 caracteres. */
-  subheadline?: string;
-  /** Botão de chamada para ação. */
-  cta: {
-    /** Texto exibido no botão. Máximo ~30 caracteres. */
-    label: string;
-    /** URL de destino. Pode ser caminho interno (/contato) ou URL externa. */
-    href: string;
-    /** Estilo visual do botão. */
-    style?: "primary" | "secondary" | "whatsapp";
-  };
-}
-```
-
-Após criar o componente, adicione o reexporte em `src/types/content.ts` e inclua o tipo no union `SectionData`.
-
-### 6. Convenção de nomes
-
-- Componentes de seção: PascalCase → `Hero.tsx`, `Features.tsx`, `ContactForm.tsx`
-- Arquivos de dados: kebab-case → `home.data.json`, `site.config.json`
-- IDs de seção no JSON: kebab-case descritivo → `"id": "hero-principal"`, `"id": "servicos-destaque"`
-- Tipo de seção no JSON: kebab-case → `"type": "hero"`, `"type": "features"`, `"type": "contact-form"`
-
-### 7. Imagens
-
-- Imagens ficam em `public/media/` com nomes descritivos em kebab-case
-- Referências no JSON usam o path relativo: `"/media/hero-project.webp"`
-- Toda imagem OBRIGATORIAMENTE tem `alt` descritivo no JSON
-- Formatos preferidos: `.webp` para fotos, `.svg` para ícones/logos e placeholders
-- O arquivo `content/media/manifest.json` registra todas as imagens com metadata
-
-**Placeholders SVG:** Durante a criação do site, crie arquivos `.svg` em `public/media/` para cada imagem que o site precisará. Use nomes definitivos em kebab-case (ex: `project-higienopolis-house.svg`). Quando as fotos reais chegarem, substitua os SVGs mantendo o mesmo nome de arquivo — assim o JSON não precisa ser atualizado. Os SVGs de placeholder devem usar a paleta do cliente, mostrar um ícone descritivo e um label identificando o conteúdo esperado.
-
----
-
-## Ao criar um novo site (workflow completo)
-
-1. Ler o briefing do cliente (fornecido como contexto)
-2. Substituir os dados placeholder em `content/site.config.json` ou criar novos dados se necessário (marca, cores, contato)
-3. Rodar `npm run generate-theme` para regenerar `src/app/theme.generated.css` com as cores do cliente
-4. Atualizar `src/app/layout.tsx` para importar as fontes corretas via `next/font/google`
-5. **Criar SVGs de placeholder** em `public/media/` para todas as imagens que o site precisará — antes de escrever o conteúdo JSON, para que os paths já existam e possam ser referenciados imediatamente
-6. **Atualizar `content/media/manifest.json`** com todas as imagens criadas no passo anterior, incluindo `src`, `alt`, `width`, `height` e `usedIn` corretos
-7. Criar os componentes base necessários em `src/components/ui/` (Button, Card, etc.) para evitar repetição de código e garantir consistência visual
-8. Criar os componentes de layout (Header, Footer) em `src/components/layout/`
-9. Criar os componentes visuais em `src/components/sections/` com design único — garantindo que a interface de props de cada componente tenha comentários JSDoc descritivos em inglês em todos os campos
-10. Popular os arquivos em `content/pages/` com dados reais do cliente, referenciando os paths `.svg` dos placeholders
-11. Criar `content/navigation.json` com a estrutura de menus
-12. Adicionar reexporte de cada novo tipo de seção em `src/types/content.ts` e incluir no union `SectionData`
-13. Implementar `src/lib/content.ts` (leitura de JSON/MDX)
-14. Implementar `src/lib/section-registry.ts` (mapeamento type → componente)
-15. Criar as rotas em `src/app/` (home + páginas dinâmicas)
-16. Atualizar `ai/CONVENTIONS.md` com a estrutura específica deste site
-17. Atualizar `ai/EDITING_GUIDE.md` com regras específicas deste site
-18. Usar a skill `web-design-guidelines` para revisar UI/acessibilidade dos componentes criados
-19. Usar a skill `vercel-react-best-practices` para revisar performance dos componentes React/Next.js
-20. Rodar `npm run build` para confirmar que o build passa sem erros
-21. Usar a skill `deploy-to-vercel` para fazer o deploy de preview na Vercel
-
----
-
-## Ao editar conteúdo existente
-
-1. Ler `ai/CONVENTIONS.md` e `ai/EDITING_GUIDE.md`
-2. Ler a interface TypeScript do componente correspondente em `src/components/sections/` (ou `src/types/content.ts` para estruturas globais)
-3. Ler o conteúdo atual do arquivo em `content/`
-4. Aplicar a alteração solicitada respeitando os tipos e comentários JSDoc da interface
-5. **Nunca** alterar componentes, tipos TypeScript ou código — apenas arquivos em `content/`
-
----
-
-## Padrões de código
-
-- TypeScript strict mode: sempre tipar props e retornos
-- Componentes: function declarations com export nomeado (não default, exceto pages)
-- Imports: usar alias `@/` para `src/`
-- Tailwind v4: usar a nova sintaxe de configuração via CSS (`@theme`)
-- Formatação: Prettier com plugin tailwindcss (já configurado)
-- Sem bibliotecas de UI externas a menos que explicitamente solicitado
-
----
-
-## TODO: Studio AI (/studio)
-
-The site includes an embedded AI-powered content editing studio at `/studio`.
-
-TODO: This studio allows users to edit the site's content (JSON/MDX files in `content/`) through a user-friendly interface (chat), without needing to touch code.
-
----
-
-## Skills
-
-Este projeto usa Claude Code Agent Skills (`.agents/skills/`, com symlink em `.claude/skills/`):
-
-- `deploy-to-vercel` — Deploy na Vercel. Usar ao final do workflow de criação de novo site e sempre que o usuário pedir deploy.
-- `vercel-react-best-practices` — Padrões de performance React/Next.js. Usar após criar ou refatorar componentes.
-- `vercel-composition-patterns` — Padrões de composição React. Usar ao projetar APIs de componentes reutilizáveis.
-- `web-design-guidelines` — Revisão de UI/acessibilidade. Usar após criar todos os componentes visuais de um novo design.
-
-**Regra:** Ao gerar um novo design completo, sempre executar `web-design-guidelines` e `vercel-react-best-practices` antes do deploy.
+If `next/font/google` requires network access in the current environment, note
+that explicitly when reporting build results.
