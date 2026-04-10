@@ -58,7 +58,7 @@ export function ChatInput({
         : "Send";
 
   return (
-    <div className="border-t border-(--st-border-subtle) bg-(--st-bg-subtle) px-4 py-4 sm:px-6">
+    <div className="border-t border-(--st-border-subtle) bg-(--st-bg-subtle) px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-6">
       <div className="rounded-(--st-radius-lg) border border-(--st-border) bg-(--st-bg-surface) p-3 shadow-(--st-shadow-sm)">
         <textarea
           ref={textareaRef}
