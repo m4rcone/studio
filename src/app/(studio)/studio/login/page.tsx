@@ -8,10 +8,13 @@ export const metadata = {
 
 export default function StudioLoginPage() {
   return (
-    <div className="studio flex h-screen flex-col">
+    <div className="studio flex min-h-[100dvh] flex-col">
       <StudioHeader userName={null} />
 
-      <main className="mx-auto flex w-full max-w-[1200px] flex-1 items-center justify-center px-4 sm:px-6">
+      <main
+        className="mx-auto flex w-full max-w-[1200px] flex-1 items-center justify-center px-4 sm:px-6"
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1rem)" }}
+      >
         <section className="st-panel w-full max-w-md p-8 sm:p-10">
           <div className="mb-8">
             <h1 className="text-2xl font-semibold text-(--st-text)">Sign In</h1>
