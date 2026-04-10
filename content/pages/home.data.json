@@ -9,7 +9,7 @@
       "type": "hero",
       "id": "main-hero",
       "data": {
-        "headline": "We design spaces that tell your story",
+        "headline": "Projetos autorais para espaços contemporâneos",
         "subheadline": "From concept to delivery, every project is developed with exclusive dedication — blending contemporary aesthetics with intelligent functionality.",
         "cta": {
           "label": "Request a Quote",
@@ -31,10 +31,22 @@
       "id": "office-stats",
       "data": {
         "items": [
-          { "value": "15+", "label": "Years of experience" },
-          { "value": "380+", "label": "Projects delivered" },
-          { "value": "98%", "label": "Client satisfaction" },
-          { "value": "12", "label": "Awards won" }
+          {
+            "value": "15+",
+            "label": "Years of experience"
+          },
+          {
+            "value": "380+",
+            "label": "Projects delivered"
+          },
+          {
+            "value": "98%",
+            "label": "Client satisfaction"
+          },
+          {
+            "value": "12",
+            "label": "Awards won"
+          }
         ]
       }
     },
