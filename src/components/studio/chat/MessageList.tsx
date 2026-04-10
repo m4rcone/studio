@@ -14,12 +14,6 @@ interface MessageListProps {
   onProposalApplied?: () => void;
 }
 
-const starterPrompts = [
-  "Rewrite the homepage headline.",
-  "Make the testimonials shorter.",
-  "Add a new services section.",
-];
-
 export function MessageList({
   messages,
   isStreaming,

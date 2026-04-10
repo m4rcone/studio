@@ -222,7 +222,9 @@ export function StudioShell() {
               discardLoading={pendingAction === "discard"}
               publishDisabled={Boolean(pendingAction)}
               discardDisabled={Boolean(pendingAction)}
-              canPublish={session?.status === "active" && Boolean(session?.prNumber)}
+              canPublish={
+                session?.status === "active" && Boolean(session?.prNumber)
+              }
               sessionStatus={session?.status}
             />
           </div>

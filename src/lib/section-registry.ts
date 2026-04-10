@@ -64,26 +64,28 @@ import {
 } from "@/lib/studio/schemas/sections/contact-section.schema";
 import { projectDetailSchema } from "@/lib/studio/schemas/sections/project-detail.schema";
 
-type SectionSchema = z.ZodTypeAny;
-type SectionComponent = ComponentType<object>;
+type SectionProps = Record<string, unknown>;
+type SectionSchema = z.ZodType<SectionProps>;
+type SectionComponent<TProps extends SectionProps = SectionProps> =
+  ComponentType<TProps>;
 
 export interface SectionCollectionHint {
   field: string;
   description: string;
   minItems: number;
-  itemSchema: SectionSchema;
+  itemSchema: z.ZodTypeAny;
 }
 
 interface SectionDefinition<TSchema extends SectionSchema> {
   type: string;
-  component: SectionComponent;
+  component: SectionComponent<z.infer<TSchema>>;
   schema: TSchema;
   editableCollections: SectionCollectionHint[];
 }
 
 function defineSection<TSchema extends SectionSchema>(
   type: string,
-  component: ComponentType<z.infer<TSchema>>,
+  component: SectionComponent<z.infer<TSchema>>,
   schema: TSchema,
   editableCollections: SectionCollectionHint[] = [],
 ): SectionDefinition<TSchema> {
@@ -253,7 +255,7 @@ export function getSectionComponent(type: string): SectionComponent {
     );
   }
 
-  return definition?.component ?? FALLBACK_SECTION_COMPONENT;
+  return (definition?.component as SectionComponent | undefined) ?? FALLBACK_SECTION_COMPONENT;
 }
 
 export function getSectionSchema(type: string): SectionSchema | null {
