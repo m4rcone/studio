@@ -58,10 +58,7 @@ export function ChatInput({
         : "Send";
 
   return (
-    <div
-      className="border-t border-(--st-border-subtle) bg-(--st-bg-subtle) px-4 py-4 sm:px-6"
-      style={{ paddingBottom: "max(env(safe-area-inset-bottom), 1rem)" }}
-    >
+    <div className="border-t border-(--st-border-subtle) bg-(--st-bg-subtle) px-4 py-4 sm:px-6">
       <div className="rounded-(--st-radius-lg) border border-(--st-border) bg-(--st-bg-surface) p-3 shadow-(--st-shadow-sm)">
         <textarea
           ref={textareaRef}
@@ -74,7 +71,7 @@ export function ChatInput({
           placeholder="Describe the change you want…"
           disabled={disabled}
           rows={1}
-          className="st-focus-ring min-h-12 w-full resize-none border-0 bg-transparent px-1 py-1.5 text-base leading-relaxed text-(--st-text) placeholder:text-(--st-text-muted) sm:text-sm"
+          className="st-focus-ring min-h-12 w-full resize-none border-0 bg-transparent px-1 py-1.5 text-sm leading-relaxed text-(--st-text) placeholder:text-(--st-text-muted)"
           aria-label="Message"
         />
 

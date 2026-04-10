@@ -132,7 +132,7 @@ export function StudioShell() {
   }
 
   return (
-    <div className="studio flex h-[100dvh] min-h-[100dvh] flex-col overflow-hidden">
+    <div className="studio flex h-dvh min-h-dvh flex-col overflow-hidden">
       <a
         href="#studio-main"
         className="st-focus-ring sr-only absolute top-4 left-4 z-20 rounded-(--st-radius-full) bg-(--st-bg-surface) px-4 py-2 text-sm text-(--st-text) shadow-(--st-shadow-sm) focus:not-sr-only"
