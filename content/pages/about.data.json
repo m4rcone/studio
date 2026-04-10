@@ -73,6 +73,16 @@
               "src": "/media/team-rafael-monteiro.svg",
               "alt": "Rafael Monteiro, partner at Atlas Architecture"
             }
+          },
+          {
+            "id": "team-ana-martins",
+            "name": "Ana Martins",
+            "role": "Arquiteta",
+            "bio": "Atua com foco em interiores residenciais de alto padrão",
+            "image": {
+              "src": "/media/team-ana-martins.jpg",
+              "alt": "Retrato de Ana Martins"
+            }
           }
         ]
       }
