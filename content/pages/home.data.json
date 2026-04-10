@@ -1,7 +1,7 @@
 {
   "slug": "home",
   "meta": {
-    "title": "Home",
+    "title": "Arquitetura residencial e comercial em Porto Alegre",
     "description": "Atlas Architecture — Architecture and interior design studio in São Paulo. Residential and commercial projects with personalized service and 3D visualization."
   },
   "sections": [
@@ -31,10 +31,22 @@
       "id": "office-stats",
       "data": {
         "items": [
-          { "value": "15+", "label": "Years of experience" },
-          { "value": "380+", "label": "Projects delivered" },
-          { "value": "98%", "label": "Client satisfaction" },
-          { "value": "12", "label": "Awards won" }
+          {
+            "value": "15+",
+            "label": "Years of experience"
+          },
+          {
+            "value": "380+",
+            "label": "Projects delivered"
+          },
+          {
+            "value": "98%",
+            "label": "Client satisfaction"
+          },
+          {
+            "value": "12",
+            "label": "Awards won"
+          }
         ]
       }
     },
