@@ -123,19 +123,6 @@
           }
         ]
       }
-    },
-    {
-      "type": "cta",
-      "id": "quote-cta",
-      "data": {
-        "headline": "Let's create something extraordinary together?",
-        "text": "Every project starts with a conversation. Get in touch and discover how we can transform your space.",
-        "cta": {
-          "label": "Chat on WhatsApp",
-          "href": "https://wa.me/5511987654321",
-          "style": "whatsapp"
-        }
-      }
     }
   ]
 }
