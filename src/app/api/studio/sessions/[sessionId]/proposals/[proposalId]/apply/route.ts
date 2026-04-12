@@ -3,6 +3,7 @@ import { verifyAuth } from "@/lib/studio/auth";
 import { getSession, updateSession } from "@/lib/studio/session-store";
 import { getProposal, updateProposalStatus } from "@/lib/studio/proposal";
 import { applyProposal } from "@/lib/studio/apply";
+import { getDeploymentStatus } from "@/lib/studio/deployment";
 import { acquireLock, releaseLock } from "@/lib/studio/store";
 
 interface RouteParams {
@@ -60,6 +61,12 @@ export async function POST(_request: Request, { params }: RouteParams) {
       session.prNumber = result.prNumber;
       session.prUrl = result.prUrl;
       session.latestCommitSha = result.sha;
+      const deploymentStatus = await getDeploymentStatus(
+        result.branch,
+        result.sha,
+      );
+      session.previewUrl =
+        deploymentStatus.url ?? deploymentStatus.estimatedUrl ?? null;
       session.commitCount += 1;
       session.changedFiles = Array.from(
         new Set([...session.changedFiles, ...proposal.affectedFiles]),

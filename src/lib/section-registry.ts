@@ -255,7 +255,10 @@ export function getSectionComponent(type: string): SectionComponent {
     );
   }
 
-  return (definition?.component as SectionComponent | undefined) ?? FALLBACK_SECTION_COMPONENT;
+  return (
+    (definition?.component as SectionComponent | undefined) ??
+    FALLBACK_SECTION_COMPONENT
+  );
 }
 
 export function getSectionSchema(type: string): SectionSchema | null {

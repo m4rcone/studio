@@ -5,6 +5,7 @@ import { ChatInput } from "./ChatInput";
 import { StudioBadge } from "../ui/StudioBadge";
 import { StudioButton } from "../ui/StudioButton";
 import type { UIChatMessage } from "@/hooks/studio/useChat";
+import { Plus } from "lucide-react";
 
 interface ChatPanelProps {
   messages: UIChatMessage[];
@@ -18,13 +19,6 @@ interface ChatPanelProps {
   onNewChat?: () => void;
   newChatLoading?: boolean;
   newChatDisabled?: boolean;
-  onPublish?: () => void;
-  onDiscard?: () => void;
-  publishLoading?: boolean;
-  discardLoading?: boolean;
-  publishDisabled?: boolean;
-  discardDisabled?: boolean;
-  canPublish?: boolean;
   sessionStatus?: "active" | "approved" | "discarded";
 }
 
@@ -40,13 +34,6 @@ export function ChatPanel({
   onNewChat,
   newChatLoading = false,
   newChatDisabled = false,
-  onPublish,
-  onDiscard,
-  publishLoading = false,
-  discardLoading = false,
-  publishDisabled = false,
-  discardDisabled = false,
-  canPublish = false,
   sessionStatus = "active",
 }: ChatPanelProps) {
   const chatStatus = !sessionId
@@ -65,14 +52,14 @@ export function ChatPanel({
           ? { label: "Published", variant: "approved" as const }
           : sessionStatus === "discarded"
             ? { label: "Closed", variant: "discarded" as const }
-            : { label: "Ready", variant: "active" as const };
+            : { label: "Active", variant: "active" as const };
 
   return (
     <section className="st-panel flex h-full min-h-0 flex-1 flex-col overflow-hidden">
       <div className="flex items-center justify-between gap-3 border-b border-(--st-border-subtle) px-4 py-4 sm:px-6">
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium text-(--st-text)">
-            AI Editor
+            Content Editor
           </span>
           <StudioBadge
             label={statusCopy.label}
@@ -85,30 +72,6 @@ export function ChatPanel({
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2">
-          {canPublish && onPublish ? (
-            <StudioButton
-              variant="primary"
-              size="sm"
-              onClick={onPublish}
-              loading={publishLoading}
-              disabled={publishDisabled}
-            >
-              {publishLoading ? "Publishing…" : "Publish"}
-            </StudioButton>
-          ) : null}
-
-          {canPublish && onDiscard ? (
-            <StudioButton
-              variant="secondary"
-              size="sm"
-              onClick={onDiscard}
-              loading={discardLoading}
-              disabled={discardDisabled}
-            >
-              {discardLoading ? "Discarding…" : "Discard"}
-            </StudioButton>
-          ) : null}
-
           {onNewChat ? (
             <StudioButton
               variant="ghost"
@@ -117,6 +80,7 @@ export function ChatPanel({
               loading={newChatLoading}
               disabled={newChatDisabled}
             >
+              <Plus width={14} height={14} />
               {newChatLoading ? "Starting…" : "New Chat"}
             </StudioButton>
           ) : null}

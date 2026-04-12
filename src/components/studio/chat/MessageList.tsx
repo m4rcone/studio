@@ -4,6 +4,7 @@ import { useAutoScroll } from "@/hooks/studio/useAutoScroll";
 import { ChatMessage } from "./ChatMessage";
 import { StreamingIndicator } from "./StreamingIndicator";
 import type { UIChatMessage } from "@/hooks/studio/useChat";
+import { Component } from "lucide-react";
 
 interface MessageListProps {
   messages: UIChatMessage[];
@@ -57,19 +58,11 @@ export function MessageList({
         // Creative empty state
         <div className="flex min-h-full flex-col items-center justify-center gap-6">
           <div className="flex h-24 w-24 items-center justify-center rounded-(--st-radius-lg) bg-(--st-bg-subtle)">
-            <svg
+            <Component
+              width={32}
+              height={32}
               className="h-12 w-12 text-(--st-text-muted) opacity-60"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8m0 8l-4-2m4 2l4-2"
-              />
-            </svg>
+            />
           </div>
           <div className="text-center">
             <h3 className="mb-2 text-lg font-semibold text-(--st-text)">
@@ -77,7 +70,7 @@ export function MessageList({
             </h3>
             <p className="max-w-sm text-sm text-(--st-text-muted)">
               Tell me what you&apos;d like to change on your site, and I&apos;ll
-              help you bring it to life.
+              take care of the rest.
             </p>
           </div>
         </div>

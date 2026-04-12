@@ -25,13 +25,7 @@ export function StudioShell() {
     discardSession,
     startNewSession,
   } = useSession();
-  const {
-    bypassConfigured,
-    previewHref,
-    previewPending,
-    previewStatus,
-    markPreviewPending,
-  } = usePreviewStatus(session);
+  const { bypassConfigured, previewHref } = usePreviewStatus(session);
   const {
     messages,
     isStreaming,
@@ -92,9 +86,8 @@ export function StudioShell() {
 
   const handleProposalApplied = useCallback(() => {
     if (!session?.id) return;
-    markPreviewPending();
     void refreshSession(session.id);
-  }, [markPreviewPending, refreshSession, session?.id]);
+  }, [refreshSession, session?.id]);
 
   if (authLoading) {
     return (
@@ -144,7 +137,7 @@ export function StudioShell() {
 
       <main
         id="studio-main"
-        className="mx-auto flex min-h-0 w-full max-w-[1200px] flex-1 flex-col overflow-hidden px-4 py-4 sm:px-6 sm:py-6"
+        className="mx-auto flex min-h-0 w-full max-w-300 flex-1 flex-col overflow-hidden px-4 py-4 sm:px-6 sm:py-6"
       >
         {sessionError ? (
           <div className="mb-4 rounded-(--st-radius) border border-(--st-danger-border) bg-(--st-danger-muted) px-4 py-3">
@@ -216,15 +209,6 @@ export function StudioShell() {
               newChatDisabled={
                 isStreaming || Boolean(pendingAction) || !session?.id
               }
-              onPublish={() => setConfirmAction("publish")}
-              onDiscard={() => setConfirmAction("discard")}
-              publishLoading={pendingAction === "publish"}
-              discardLoading={pendingAction === "discard"}
-              publishDisabled={Boolean(pendingAction)}
-              discardDisabled={Boolean(pendingAction)}
-              canPublish={
-                session?.status === "active" && Boolean(session?.prNumber)
-              }
               sessionStatus={session?.status}
             />
           </div>
@@ -237,8 +221,22 @@ export function StudioShell() {
               loading={isBootstrappingSession}
               bypassConfigured={bypassConfigured}
               previewHref={previewHref}
-              previewPending={previewPending}
-              previewStatus={previewStatus}
+              onPublish={() => setConfirmAction("publish")}
+              onDiscard={() => setConfirmAction("discard")}
+              publishLoading={pendingAction === "publish"}
+              discardLoading={pendingAction === "discard"}
+              publishDisabled={
+                Boolean(pendingAction) ||
+                !session ||
+                session.status !== "active" ||
+                !session.prNumber
+              }
+              discardDisabled={
+                Boolean(pendingAction) ||
+                !session ||
+                session.status !== "active" ||
+                !session.prNumber
+              }
             />
           </div>
         </div>
@@ -247,7 +245,7 @@ export function StudioShell() {
       <ConfirmDialog
         open={confirmAction === "publish"}
         title="Publish Changes?"
-        description="This will send the reviewed changes live."
+        description="This will update the website with the changes in this session."
         confirmLabel="Publish"
         onConfirm={() => void handleConfirm()}
         onCancel={() => setConfirmAction(null)}
@@ -256,8 +254,8 @@ export function StudioShell() {
 
       <ConfirmDialog
         open={confirmAction === "discard"}
-        title="Discard This Draft?"
-        description="This will close the current draft and clear this chat from the browser."
+        title="Discard Changes?"
+        description="This will close the current session and discard all changes."
         confirmLabel="Discard"
         onConfirm={() => void handleConfirm()}
         onCancel={() => setConfirmAction(null)}

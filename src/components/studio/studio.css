@@ -94,6 +94,13 @@
   background: rgb(37 99 235 / 0.16);
 }
 
+.studio h1,
+h2,
+h3,
+h4 {
+  font-family: var(--st-font-display);
+}
+
 .studio a,
 .studio button {
   touch-action: manipulation;
@@ -129,10 +136,10 @@
   border: 1px solid var(--st-border);
   border-radius: var(--st-radius-full);
   background: var(--st-bg-surface);
-  padding: 0.8rem 1rem;
+  padding: 0.625rem 1rem;
   color: var(--st-text);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 500;
   transition:
     background-color 150ms ease,
     border-color 150ms ease,

@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { StudioButton } from "../ui/StudioButton";
+import { ArrowUp, LoaderCircle } from "lucide-react";
 
 interface ChatInputProps {
   onSend: (message: string) => void;
@@ -50,13 +52,6 @@ export function ChatInput({
         ? "Working…"
         : "Enter to send. Shift + Enter for a new line.";
 
-  const buttonLabel =
-    status === "streaming"
-      ? "Sending…"
-      : status === "preparing"
-        ? "Starting…"
-        : "Send";
-
   return (
     <div className="border-t border-(--st-border-subtle) bg-(--st-bg-subtle) px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-6">
       <div className="rounded-(--st-radius-lg) border border-(--st-border) bg-(--st-bg-surface) p-3 shadow-(--st-shadow-sm)">
@@ -78,39 +73,31 @@ export function ChatInput({
         <div className="mt-3 flex items-center justify-between gap-3 border-t border-(--st-border-subtle) pt-3">
           <p className="text-xs text-(--st-text-muted)">{statusText}</p>
 
-          <button
-            type="button"
+          <StudioButton
+            variant="primary"
+            size="md"
             onClick={handleSubmit}
+            loading={false}
             disabled={!value.trim() || disabled}
-            className="st-focus-ring inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-(--st-radius-full) bg-(--st-accent) px-4 text-sm font-medium text-(--st-accent-text) transition-colors hover:bg-(--st-accent-hover) disabled:bg-(--st-line-strong) disabled:text-(--st-text-muted)"
-            aria-label="Send message"
+            aria-label={
+              status === "streaming"
+                ? "Sending message"
+                : status === "preparing"
+                  ? "Preparing chat"
+                  : "Send message"
+            }
           >
-            {status === "streaming" ? (
-              <svg
+            {status === "streaming" || status === "preparing" ? (
+              <LoaderCircle
+                width={20}
+                height={20}
+                className="animate-spin"
                 aria-hidden="true"
-                className="h-4 w-4 animate-spin"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  className="opacity-25"
-                />
-                <path
-                  d="M4 12a8 8 0 018-8"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  className="opacity-75"
-                />
-              </svg>
-            ) : null}
-            {buttonLabel}
-          </button>
+              />
+            ) : (
+              <ArrowUp width={20} height={20} aria-hidden="true" />
+            )}
+          </StudioButton>
         </div>
       </div>
     </div>

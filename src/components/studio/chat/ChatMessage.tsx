@@ -62,7 +62,7 @@ export function ChatMessage({
         >
           {message.content ? (
             isUser ? (
-              <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">
+              <p className="text-sm leading-relaxed wrap-break-word whitespace-pre-wrap">
                 {message.content}
               </p>
             ) : (

@@ -2,11 +2,16 @@
 
 import type { StudioSession } from "@/lib/studio/types";
 import { StudioBadge } from "../ui/StudioBadge";
-
+import { StudioButton } from "../ui/StudioButton";
+import {
+  GitBranch,
+  GitPullRequestArrow,
+  GitPullRequestClosed,
+  Lightbulb,
+} from "lucide-react";
 const studioTips = [
-  "Ask for the page or section content structure first so you can see exactly what to change. The structure comes as JSON.",
-  "Reference the section name and the specific field you want to change to get a more precise proposal.",
-  "Keep each request focused on one change at a time when you want faster review and approval.",
+  "Ask for the page or section content structure first so you can see exactly what to change.",
+  "Keep each request focused on one change at a time.",
 ];
 
 interface SessionPanelProps {
@@ -14,17 +19,25 @@ interface SessionPanelProps {
   loading?: boolean;
   bypassConfigured?: boolean;
   previewHref?: string | null;
-  previewPending?: boolean;
-  previewStatus?: string;
+  onPublish?: () => void;
+  onDiscard?: () => void;
+  publishLoading?: boolean;
+  discardLoading?: boolean;
+  publishDisabled?: boolean;
+  discardDisabled?: boolean;
 }
 
 export function SessionPanel({
   session,
   loading = false,
-  bypassConfigured = false,
+  // bypassConfigured = false,
   previewHref = null,
-  previewPending = false,
-  previewStatus = "idle",
+  onPublish,
+  onDiscard,
+  publishLoading = false,
+  discardLoading = false,
+  publishDisabled = false,
+  discardDisabled = false,
 }: SessionPanelProps) {
   if (loading || !session) {
     return (
@@ -36,15 +49,19 @@ export function SessionPanel({
     );
   }
 
-  const effectivePreviewStatus =
-    previewPending && previewStatus !== "error" ? "building" : previewStatus;
-
   const sessionMeta =
     session.status === "approved"
       ? { label: "Published", variant: "approved" as const }
       : session.status === "discarded"
         ? { label: "Closed", variant: "discarded" as const }
-        : { label: "Draft", variant: "active" as const };
+        : { label: "Active", variant: "active" as const };
+  const canOpenPreview = Boolean(previewHref) && session.status !== "discarded";
+  const previewMessage =
+    session.status === "discarded"
+      ? "Preview is unavailable for closed chats."
+      : canOpenPreview
+        ? "Applied changes may take up to a minute to appear on the page."
+        : "Preview will appear after the first applied change.";
 
   return (
     <aside className="h-full space-y-4 overflow-y-auto lg:sticky lg:top-6 lg:max-h-full lg:overflow-y-auto">
@@ -59,39 +76,23 @@ export function SessionPanel({
         </div>
 
         <div className="space-y-3 px-5 py-4">
-          {previewHref && session.status !== "discarded" ? (
-            <a
-              href={previewHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="st-focus-ring st-link-button st-link-button-primary w-full"
-            >
-              Open Preview
-            </a>
-          ) : (
-            <div className="rounded-(--st-radius) border border-(--st-border-subtle) bg-(--st-bg-subtle) px-4 py-3 text-sm text-(--st-text-muted)">
-              {session.status === "discarded"
-                ? "Preview is unavailable for closed chats."
-                : "Preview will appear after the first applied change."}
-            </div>
-          )}
+          <StudioButton
+            variant="primary"
+            size="md"
+            disabled={!canOpenPreview}
+            className="w-full"
+            onClick={() => {
+              if (!previewHref) return;
+              window.open(previewHref, "_blank", "noopener,noreferrer");
+            }}
+          >
+            <GitBranch width={14} height={14} />
+            Open Preview
+          </StudioButton>
 
-          {session.status !== "discarded" &&
-          (previewPending || effectivePreviewStatus === "building") ? (
-            <p className="text-xs leading-relaxed text-(--st-text-muted)">
-              Preview is being generated or updated. It may take a minute.
-            </p>
-          ) : null}
-
-          {previewHref &&
-          session.status !== "discarded" &&
-          !bypassConfigured ? (
-            <p className="text-xs leading-relaxed text-(--st-text-muted)">
-              This environment has no Vercel automation bypass secret
-              configured, so protected previews may still ask for
-              authentication.
-            </p>
-          ) : null}
+          <p className="text-xs leading-relaxed text-(--st-text-muted)">
+            {previewMessage}
+          </p>
         </div>
       </section>
 
@@ -104,6 +105,10 @@ export function SessionPanel({
             <StudioBadge
               label={sessionMeta.label}
               variant={sessionMeta.variant}
+              dot={
+                sessionMeta.variant !== "approved" &&
+                sessionMeta.variant !== "discarded"
+              }
             />
           </div>
         </div>
@@ -116,11 +121,44 @@ export function SessionPanel({
             </dd>
           </div>
         </dl>
+        <div className="grid grid-cols-2 gap-2 px-5 py-4">
+          {onPublish ? (
+            <StudioButton
+              variant="primary"
+              size="md"
+              onClick={onPublish}
+              loading={publishLoading}
+              disabled={publishDisabled}
+              className="w-full"
+            >
+              <GitPullRequestArrow width={14} height={14} />
+              {/* <Loader2 className={"animate-spin"} width={14} height={14} /> */}
+              {publishLoading ? "Publishing…" : "Publish"}
+            </StudioButton>
+          ) : null}
+
+          {onDiscard ? (
+            <StudioButton
+              variant="secondary"
+              size="md"
+              onClick={onDiscard}
+              loading={discardLoading}
+              disabled={discardDisabled}
+              className="w-full"
+            >
+              <GitPullRequestClosed width={14} height={14} />
+              {discardLoading ? "Discarding…" : "Discard"}
+            </StudioButton>
+          ) : null}
+        </div>
       </section>
 
       <section className="st-panel overflow-hidden">
         <div className="border-b border-(--st-border-subtle) px-5 py-4">
-          <span className="text-sm font-medium text-(--st-text)">Tips</span>
+          <span className="flex items-center gap-2 text-sm font-medium text-(--st-text)">
+            <Lightbulb width={14} height={14} />
+            Tips
+          </span>
         </div>
 
         <div className="px-5 py-4">
