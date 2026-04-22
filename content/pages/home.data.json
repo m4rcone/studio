@@ -27,6 +27,30 @@
       }
     },
     {
+      "type": "stats",
+      "id": "office-stats",
+      "data": {
+        "items": [
+          {
+            "value": "15+",
+            "label": "Years of experience"
+          },
+          {
+            "value": "380+",
+            "label": "Projects delivered"
+          },
+          {
+            "value": "98%",
+            "label": "Client satisfaction"
+          },
+          {
+            "value": "25",
+            "label": "Awards won"
+          }
+        ]
+      }
+    },
+    {
       "type": "portfolio-preview",
       "id": "featured-portfolio",
       "data": {
@@ -68,30 +92,6 @@
               "alt": "Sophisticated boutique interior on Oscar Freire"
             },
             "href": "/project-oscar-freire-boutique"
-          }
-        ]
-      }
-    },
-    {
-      "type": "stats",
-      "id": "office-stats",
-      "data": {
-        "items": [
-          {
-            "value": "15+",
-            "label": "Years of experience"
-          },
-          {
-            "value": "380+",
-            "label": "Projects delivered"
-          },
-          {
-            "value": "98%",
-            "label": "Client satisfaction"
-          },
-          {
-            "value": "25",
-            "label": "Awards won"
           }
         ]
       }
